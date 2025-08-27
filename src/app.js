@@ -5,14 +5,14 @@ const PORT = process.env.PORT;
 import express, { application } from 'express';
 
 // Packages
-import morgan from 'morgan'; // Loggin
-import cookieParser from 'cookie-parser'; // JWT
-import helmet from 'helmet'; // Secure HTTP header
-import xss from 'xss-clean'; // Sanitize HTML input
-import cors from 'cors'; // Cross origin request
+import morgan from 'morgan';                  // Loggin
+import cookieParser from 'cookie-parser';     // JWT
+import helmet from 'helmet';                  // Secure HTTP header
+import cors from 'cors';                      // Cross origin request
 import rateLimiter from 'express-rate-limit'; // Prevent bruteforce
 
 import { deviceRouter } from './api/v1/router/deviceRouter.js';
+import { errorHandlerMiddleware } from './api/v1/middlewares/ErrorMiddleware.js';
 
 // Express
 const app = express();
@@ -37,6 +37,10 @@ app.use(express.json());
 
 // Router
 app.use('/devices', deviceRouter)
+
+
+// Error handler
+app.use(errorHandlerMiddleware)
 
 app.listen(PORT, () => {
   console.log('Application listening at port: ', PORT);

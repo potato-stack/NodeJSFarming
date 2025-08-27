@@ -1,37 +1,73 @@
 import { TelemetryDevices } from "../../models/device/telemetryDevice.js"
+import { DeviceError } from "../../errors/DeviceError.js";
 
+const HandleDBError = (error) => {
+    // Fall back for database connection error or undefined error
+    if (error.name === 'SequelizeDatabaseError')
+        throw DeviceError.DatabaseError()
+    // Forward the error
+    throw error
+}
 export class TelemetryServices {
     async createDevice(props) {
-        console.log({ ...props })
-        const device = await TelemetryDevices.create({
-            name: 'humid_sensor', // Non-null string
-            location: 'your_mom_house', // Non-null string
-            status: 'offline' // Must be 'online', 'offline', or 'unknown'
-        });
-        return device;
+        try {
+            const device = await TelemetryDevices.create({ ...props });
+            return device;
+        }
+        catch (error) {
+            if (error.name === 'SequelizeUniqueConstraintError')
+                throw DeviceError.Conflict()
+            HandleDBError(error)
+        }
     }
 
     async getDeviceByID(id) {
-        const device = await TelemetryDevices.findByPk(id);
-        return device;
+        try {
+            const device = await TelemetryDevices.findByPk(id);
+            if (!device) {
+                throw DeviceError.NotFound(`Device with ID ${id} not found`)
+            }
+            return device;
+        } catch (error) {
+            HandleDBError(error)
+        }
     }
 
     async getAllDevices() {
-        const devices = await TelemetryDevices.findAll();
-        return devices;
+        try {
+            const devices = await TelemetryDevices.findAll();
+            if (devices.length === 0) {
+                throw DeviceError.NotFound('No devices found')
+            }
+            return devices;
+        } catch (error) {
+            HandleDBError(error)
+        }
     }
 
     async updateDevice(id, props) {
-        const [affectedCount] = await TelemetryDevices.update(id, { ...props })
-        if (affectedCount === 0) {
-            return { status: 'failed', message: `No device found with ID ${id}` };
+        try {
+            const [affectedCount] = await TelemetryDevices.update(id, { ...props })
+            if (affectedCount === 0) {
+                throw DeviceError.NotFound(`Device with ID ${id} not found`)
+            }
+            return { status: 'success', message: `Device with ID ${id} updated successfully` };
+        } catch (error) {
+            HandleDBError(error)
         }
-
-        return { status: 'success', message: `Device with ID ${id} updated successfully` };
     }
 
     async deleteDevice(id) {
-        await TelemetryDevices.delete(id);
-        return { message: `Device of id: ${id} is deleted sucessfully` }
+        try {
+            const affectedCount = await TelemetryDevices.destroy({ where: { id } });
+
+            if (affectedCount === 0) {
+                throw DeviceError.NotFound()
+            }
+            return { status: 'success', message: `Device of id: ${id} is deleted sucessfully` }
+        }
+        catch (error) {
+            HandleDBError(error)
+        }
     }
 }
