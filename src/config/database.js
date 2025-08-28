@@ -14,4 +14,6 @@ const sequelize = new Sequelize({
     logging: false, //Sqlite is just file so ignore
 });
 
+// force since to establish a connection
+await sequelize.sync({ force: true }); 
 export { sequelize };

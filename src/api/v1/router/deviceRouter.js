@@ -1,4 +1,4 @@
-import { TelemetryController } from "../controllers/device/telemetryController.js";
+import { TelemetryController } from "../controllers/DeviceController.js";
 import { createDeviceSchema, getDeviceSchema, validate } from "../middlewares/ValidateMiddleware.js";
 import express from "express";
 

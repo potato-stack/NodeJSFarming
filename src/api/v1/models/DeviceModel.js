@@ -1,5 +1,5 @@
 import { DataTypes, Model } from "sequelize";
-import { sequelize } from "../../../../config/database.js";
+import { sequelize } from "../../../config/Database.js";
 
 export class TelemetryDevices extends Model { }
 
@@ -8,6 +8,10 @@ TelemetryDevices.init({
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true
+    },
+    type: {
+        type: DataTypes.ENUM('actuator', 'sensor'),
+        allowNull: false
     },
     name: {
         type: DataTypes.STRING,

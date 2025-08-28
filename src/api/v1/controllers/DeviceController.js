@@ -1,7 +1,6 @@
 import StatusCodes from "http-status-codes";
-import { TelemetryServices } from "../../services/device/TelemetryService.js";
-import { TelemetryDevicesDTO } from "../../dtos/device/telemetryDevice.dto.js";
-import { DeviceError } from "../../errors/DeviceError.js";
+import { TelemetryServices } from "../services/TelemetryService.js";
+import { TelemetryDevicesDTO } from "../dtos/Device.dto.js";
 
 export class TelemetryController {
     static telemetryServices = null;

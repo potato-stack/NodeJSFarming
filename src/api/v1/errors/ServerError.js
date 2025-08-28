@@ -15,3 +15,10 @@ export class ServerError extends Error {
         return new ServerError(msg)
     }
 }
+
+export const HandleDBError = (error) => {
+  // Fall back for database connection error or undefined error
+  if (error.name === 'SequelizeDatabaseError') throw ServerError.DatabaseError(error);
+  // Forward the error
+  throw error;
+};
