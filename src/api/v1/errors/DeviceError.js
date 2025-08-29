@@ -6,10 +6,6 @@ export class DeviceError extends ServerError {
         super(message, statusCode);
     }
 
-    static BadRequest(message = "Bad Device Request") {
-        return new DeviceError(message, StatusCodes.BAD_REQUEST);
-    }
-
     static NotFound(message = "Device Is Not Found") {
         return new DeviceError(message, StatusCodes.NOT_FOUND);
     }

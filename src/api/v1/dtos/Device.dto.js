@@ -1,4 +1,4 @@
-export class TelemetryDevicesDTO {
+export class TelemetryDevicesDto {
     constructor({ id, type, name, location, status }) {
         this.id = id;
         this.type = type;

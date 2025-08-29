@@ -25,9 +25,9 @@ Users.init(
     },
   },
   {
-        sequelize, // connect to sequlize from database config
-        modelName: 'User',
-        tableName: 'garden_user',
-        timestamps: true, // We need create/update date
-  }
+    sequelize, // connect to sequlize from database config
+    modelName: 'User',
+    tableName: 'garden_user',
+    timestamps: true, // We need create/update date
+  },
 );

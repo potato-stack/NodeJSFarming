@@ -12,6 +12,7 @@ import cors from 'cors';                      // Cross origin request
 import rateLimiter from 'express-rate-limit'; // Prevent bruteforce
 
 import { deviceRouter } from './api/v1/router/deviceRouter.js';
+import { userRouter } from './api/v1/router/userRouter.js';
 import { errorHandlerMiddleware } from './api/v1/middlewares/ErrorMiddleware.js';
 
 // Express
@@ -36,6 +37,7 @@ app.use(express.json());
 
 // Router
 app.use('/devices', deviceRouter)
+app.use('/users', userRouter)
 
 
 // Error handler

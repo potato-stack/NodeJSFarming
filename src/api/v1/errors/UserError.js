@@ -6,10 +6,6 @@ export class UserError extends ServerError {
 		super(message, statusCode);
 	}
 
-	static BadRequest(message = "Bad User Request") {
-		return new UserError(message, StatusCodes.BAD_REQUEST);
-	}
-
 	static Unauthorized(messge = "Inavlid token") {
 		return new UserError(messge, StatusCodes.UNAUTHORIZED)
 	}

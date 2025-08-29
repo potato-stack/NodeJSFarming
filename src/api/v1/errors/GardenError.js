@@ -6,10 +6,6 @@ export class GardenError extends ServerError {
         super("Garden Error: " + message, statusCode);
     }
 
-    static BadRequest(message = "Bad Request") {
-        return new DeviceError(message, StatusCodes.BAD_REQUEST);
-    }
-
     static NotFound(message = "Garden Is Not Found") {
         return new DeviceError(message, StatusCodes.NOT_FOUND);
     }

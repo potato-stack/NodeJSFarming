@@ -1,8 +1,17 @@
-import { Users } from '../models/UserModel';
-import { UserError } from '../errors/UserError';
-import { HandleDBError } from '../errors/ServerError';
+import { Users } from '../models/UserModel.js';
+import { UserError } from '../errors/UserError.js';
+import { HandleDBError } from '../errors/ServerError.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken'
 
-// CRUD
+// Private methods
+const createJWT = (payload, expireTime) => {
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: expireTime });
+};
+
+const hashPassword = async (password) => {
+  return await bcrypt.hash(password, 12);
+};
 export class UsersService {
   // For mock only
   // I am so tried :((
@@ -16,18 +25,40 @@ export class UsersService {
     // To mock we will have a user hold abunch of garden in Array manner!
     this.userGardens = {};
   }
-  
-  async createUser(props) {
+
+  // Public
+  register = async (userDto) => {
     try {
-      const newUser = await Users.create({ ...props });
+      userDto.password = await hashPassword(userDto.password);
+      const newUser = await Users.create({ ...userDto });
       return newUser;
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') throw UserError.Conflict();
-      HandleDBError(error);
+      HandleDBError();
     }
-  }
+  };
 
-  async getUserBy(id) {
+  login = async (loginDto) => {
+    try {
+      const { email, password } = loginDto;
+      const user = await Users.findOne({ where: { email } });
+      if (!user) {
+        throw UserError.NotFound();
+      }
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        throw UserError.Unauthorized();
+      }
+      // Use private method
+      const token = createJWT({ id: user.id, email: user.email }, '1h');
+      return { token, user };
+    } catch (error) {
+      console.log(error)
+      HandleDBError();
+    }
+  };
+
+  getUserByID = async (id) => {
     try {
       const user = await Users.findByPk(id);
       if (!user) {
@@ -37,9 +68,9 @@ export class UsersService {
     } catch (error) {
       HandleDBError(error);
     }
-  }
+  };
 
-  async getAllUsers() {
+  getAllUsers = async () => {
     try {
       const users = await Users.findAll();
       if (users.length === 0) {
@@ -49,9 +80,9 @@ export class UsersService {
     } catch (error) {
       HandleDBError(error);
     }
-  }
+  };
 
-  async updateUser(id, props) {
+  updateUser = async (id, props) => {
     try {
       const [affectedCount] = await Users.update(id, { ...props });
       if (affectedCount === 0) {
@@ -61,9 +92,9 @@ export class UsersService {
     } catch (error) {
       HandleDBError(error);
     }
-  }
+  };
 
-  async deleteUser(id) {
+  deleteUser = async (id) => {
     try {
       const affectedCount = await Users.destroy({ where: { id } });
 
@@ -74,9 +105,9 @@ export class UsersService {
     } catch (error) {
       HandleDBError(error);
     }
-  }
+  };
 
-  async adduserToGarden(userId, gardenId, role) {
+  adduserToGarden = async (userId, gardenId, role) => {
     const garden = this.gardens.find((garden) => garden.id === gardenId);
     if (!garden) throw UserError.NotFound('Cannot find garden to add user!');
 
@@ -87,9 +118,9 @@ export class UsersService {
 
     this.userGardens[userId].push(gardenId);
     return { userId, gardenId, role };
-  }
+  };
 
-  async removeUserFromGarden(userId, gardenId) {
+  removeUserFromGarden = async (userId, gardenId) => {
     try {
       if (!this.userGardens[userId] || !this.userGardens[userId].includes(gardenId)) {
         throw new UserError.NotFound('User is not assigned to this garden');
@@ -100,10 +131,10 @@ export class UsersService {
     } catch (error) {
       HandleDBError(error);
     }
-  }
+  };
 
-  async getAllGardensOfUser(userId) {
+  getAllGardensOfUser = async (userId) => {
     if (!this.userGardens[userId]) return [];
     return this.gardens.filter((garden) => this.userGardens[userId].includes(garden.id));
-  }
+  };
 }
