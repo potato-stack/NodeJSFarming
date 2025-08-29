@@ -6,7 +6,7 @@ export class UserError extends ServerError {
 		super(message, statusCode);
 	}
 
-	static Unauthorized(messge = "Inavlid token") {
+	static Unauthorized(messge = "Invalid token") {
 		return new UserError(messge, StatusCodes.UNAUTHORIZED)
 	}
 

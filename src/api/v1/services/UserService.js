@@ -1,6 +1,6 @@
 import { Users } from '../models/UserModel.js';
 import { UserError } from '../errors/UserError.js';
-import { HandleDBError } from '../errors/ServerError.js';
+import { HandleServerError } from '../errors/ServerError.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 
@@ -34,7 +34,7 @@ export class UsersService {
       return newUser;
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') throw UserError.Conflict();
-      HandleDBError();
+      HandleServerError(error);
     }
   };
 
@@ -47,14 +47,13 @@ export class UsersService {
       }
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        throw UserError.Unauthorized();
+        throw UserError.Unauthorized('Wrong password! Please re-enter');
       }
       // Use private method
-      const token = createJWT({ id: user.id, email: user.email }, '1h');
+      const token = createJWT({ id: user.id, email: user.email }, '30m');
       return { token, user };
     } catch (error) {
-      console.log(error)
-      HandleDBError();
+      HandleServerError(error);
     }
   };
 
@@ -66,7 +65,7 @@ export class UsersService {
       }
       return user;
     } catch (error) {
-      HandleDBError(error);
+      HandleServerError(error);
     }
   };
 
@@ -78,7 +77,7 @@ export class UsersService {
       }
       return users;
     } catch (error) {
-      HandleDBError(error);
+      HandleServerError(error);
     }
   };
 
@@ -90,7 +89,7 @@ export class UsersService {
       }
       return { status: 'success', message: `User with ID ${id} updated successfully` };
     } catch (error) {
-      HandleDBError(error);
+      HandleServerError(error);
     }
   };
 
@@ -103,7 +102,7 @@ export class UsersService {
       }
       return { status: 'success', message: `User of id: ${id} is deleted sucessfully` };
     } catch (error) {
-      HandleDBError(error);
+      HandleServerError(error);
     }
   };
 
@@ -129,7 +128,7 @@ export class UsersService {
       this.userGardens[userId] = this.userGardens[userId].filter((id) => id !== gardenId);
       return { userId, gardenId };
     } catch (error) {
-      HandleDBError(error);
+      HandleServerError(error);
     }
   };
 

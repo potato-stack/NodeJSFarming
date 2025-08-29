@@ -1,6 +1,6 @@
 import { TelemetryDevices } from '../models/DeviceModel.js';
 import { DeviceError } from '../errors/DeviceError.js';
-import { HandleDBError } from '../errors/ServerError.js';
+import { HandleServerError } from '../errors/ServerError.js';
 
 export class TelemetryServices {
   async createDevice(props) {
@@ -9,7 +9,7 @@ export class TelemetryServices {
       return device;
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') throw DeviceError.Conflict();
-      HandleDBError(error);
+      HandleServerError(error);
     }
   }
 
@@ -21,7 +21,7 @@ export class TelemetryServices {
       }
       return device;
     } catch (error) {
-      HandleDBError(error);
+      HandleServerError(error);
     }
   }
 
@@ -33,7 +33,7 @@ export class TelemetryServices {
       }
       return devices;
     } catch (error) {
-      HandleDBError(error);
+      HandleServerError(error);
     }
   }
 
@@ -45,7 +45,7 @@ export class TelemetryServices {
       }
       return { status: 'success', message: `Device with ID ${id} updated successfully` };
     } catch (error) {
-      HandleDBError(error);
+      HandleServerError(error);
     }
   }
 
@@ -58,7 +58,7 @@ export class TelemetryServices {
       }
       return { status: 'success', message: `Device of id: ${id} is deleted sucessfully` };
     } catch (error) {
-      HandleDBError(error);
+      HandleServerError(error);
     }
   }
 }
