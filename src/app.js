@@ -13,10 +13,10 @@ import rateLimiter from 'express-rate-limit'; // Prevent bruteforce
 
 import { deviceRouter } from './api/v1/router/deviceRouter.js';
 import { userRouter } from './api/v1/router/userRouter.js';
-import { errorHandlerMiddleware } from './api/v1/middlewares/ErrorMiddleware.js';
-import { validateCookie } from './api/v1/middlewares/ValidateMiddleware.js';
+import { validateCookie } from './middlewares/ValidateMiddleware.js';
 import { validateTokenSchema } from './api/v1/schemas/UserSchemas.js';
-import { authMiddleWare } from './api/v1/middlewares/AuthMiddleware.js';
+import { authMiddleWare } from './middlewares/AuthMiddleware.js';
+import { errorHandlerMiddleware } from './middlewares/ErrorMiddleware.js';
 
 // Express
 const app = express();

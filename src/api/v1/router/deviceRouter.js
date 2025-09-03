@@ -1,6 +1,6 @@
 import { TelemetryController } from "../controllers/DeviceController.js";
 import { getDeviceSchema, createDeviceSchema } from '../schemas/DeviceSchemas.js';
-import { validate } from "../middlewares/ValidateMiddleware.js";
+import { validate } from "../../../middlewares/ValidateMiddleware.js";
 import express from "express";
 
 const deviceRouter = express.Router()

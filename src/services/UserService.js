@@ -1,4 +1,4 @@
-import { Users } from '../models/UserModel.js';
+import { Users } from '../repository/sequelize/User.js';
 import { UserError } from '../errors/UserError.js';
 import { HandleServerError } from '../errors/ServerError.js';
 import bcrypt from 'bcrypt';

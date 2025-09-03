@@ -1,4 +1,4 @@
-import { TelemetryDevices } from '../models/DeviceModel.js';
+import { TelemetryDevices } from '../repository/sequelize/Device.js';
 import { DeviceError } from '../errors/DeviceError.js';
 import { HandleServerError } from '../errors/ServerError.js';
 

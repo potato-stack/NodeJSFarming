@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
-import { UsersService } from '../services/UserService.js';
-import { LoginDto, UsersDto } from '../dtos/User.dto.js';
+import { UsersService } from '../../../services/UserService.js';
+import { LoginDto, RegisterDto } from '../../../dtos/User.dto.js';
 
 export class UsersController {
   static userServices = null;
@@ -14,7 +14,7 @@ export class UsersController {
 
   register = async (req, res, next) => {
     try {
-      const user = new UsersDto(req.body);
+      const user = new RegisterDto(req.body);
       const createdUser = await UsersController.getService().register(user);
 
       res.status(StatusCodes.CREATED).json(createdUser);
@@ -56,7 +56,7 @@ export class UsersController {
   updateUser = async (req, res, next) => {
     try {
       const id = Number(req.params.id);
-      const newUser = new UsersDto(req.body);
+      const newUser = new RegisterDto(req.body);
       const response = await UsersController.getService().createUser(newUser, {
         where: { id: id },
       });

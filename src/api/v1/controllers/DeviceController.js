@@ -1,6 +1,6 @@
 import StatusCodes from 'http-status-codes';
-import { TelemetryServices } from '../services/TelemetryService.js';
-import { TelemetryDevicesDto } from '../Dtos/Device.Dto.js';
+import { TelemetryServices } from '../../../services/TelemetryService.js';
+import { CreateDeviceDto } from '../../../dtos/Device.dto.js';
 
 export class TelemetryController {
   static telemetryServices = null;
@@ -14,7 +14,8 @@ export class TelemetryController {
 
   createDevice = async (req, res, next) => {
     try {
-      const device = new TelemetryDevicesDto(req.body);
+      // Mappers
+      const device = new CreateDeviceDto(req.body);
       const createdDevice = await TelemetryController.getService().createDevice(device);
 
       res.status(StatusCodes.CREATED).json(createdDevice);
@@ -46,7 +47,7 @@ export class TelemetryController {
   updateDevice = async (req, res, next) => {
     try {
       const id = Number(req.params.id);
-      const newDevice = new TelemetryDevicesDto(req.body);
+      const newDevice = new CreateDeviceDto(req.body);
       const response = await TelemetryController.getService().updateDevice(newDevice, {
         where: { id: id },
       });
