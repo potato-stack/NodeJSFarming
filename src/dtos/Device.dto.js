@@ -1,6 +1,5 @@
 export class CreateDeviceDto {
-  constructor({ id, type, name, location, status }) {
-    this.id = id;
+  constructor({type, name, location, status }) {
     this.type = type;
     this.name = name || '';
     this.location = location || 'unknown';
@@ -8,7 +7,7 @@ export class CreateDeviceDto {
   }
 }
 export class GetDeviceDto {
-  // Only used for practice, this is purelly unecessary
+  // Only used for practice, this is purely unecessary
   constructor({ id }) {
     this.id = id;
   }

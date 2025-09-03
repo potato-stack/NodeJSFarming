@@ -1,17 +1,16 @@
-import { Users } from '../repository/sequelize/User.js';
+import { User } from '../domains/entities/User.js';
+import { UserRepository } from '../infrastructure/repository/UserRepository.js';
 import { UserError } from '../errors/UserError.js';
 import { HandleServerError } from '../errors/ServerError.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 
+const userRepository = new UserRepository();
 // Private methods
 const createJWT = (payload, expireTime) => {
   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: expireTime });
 };
 
-const hashPassword = async (password) => {
-  return await bcrypt.hash(password, 12);
-};
 export class UsersService {
   // For mock only
   // I am so tried :((
@@ -29,9 +28,8 @@ export class UsersService {
   // Public
   register = async (userDto) => {
     try {
-      userDto.password = await hashPassword(userDto.password);
-      const newUser = await Users.create({ ...userDto });
-      return newUser;
+      const user = new User(userDto, true);
+      return await userRepository.create(user);
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') throw UserError.Conflict();
       HandleServerError(error);
@@ -41,7 +39,7 @@ export class UsersService {
   login = async (loginDto) => {
     try {
       const { email, password } = loginDto;
-      const user = await Users.findOne({ where: { email } });
+      const [user] = await userRepository.get({email});
       if (!user) {
         throw UserError.NotFound();
       }
@@ -59,7 +57,7 @@ export class UsersService {
 
   getUserByID = async (id) => {
     try {
-      const user = await Users.findByPk(id);
+      const user = await userRepository.getByID(id);
       if (!user) {
         throw UserError.NotFound(`User with ID ${id} not found`);
       }
@@ -71,7 +69,7 @@ export class UsersService {
 
   getAllUsers = async () => {
     try {
-      const users = await Users.findAll();
+      const users = await userRepository.get();
       if (users.length === 0) {
         throw UserError.NotFound('No user found');
       }
@@ -81,13 +79,14 @@ export class UsersService {
     }
   };
 
-  updateUser = async (id, props) => {
+  updateUser = async (userDto) => {
     try {
-      const [affectedCount] = await Users.update(id, { ...props });
+      const targetUpdate = new User(userDto);
+      const [affectedCount] = await userRepository.update(targetUpdate);
       if (affectedCount === 0) {
-        throw UserError.NotFound(`User with ID ${id} not found`);
+        throw UserError.NotFound(`User with ID ${targetUpdate.id} not found`);
       }
-      return { status: 'success', message: `User with ID ${id} updated successfully` };
+      return { status: 'success', message: `User with ID ${targetUpdate.id} updated successfully` };
     } catch (error) {
       HandleServerError(error);
     }
@@ -95,7 +94,7 @@ export class UsersService {
 
   deleteUser = async (id) => {
     try {
-      const affectedCount = await Users.destroy({ where: { id } });
+      const affectedCount = await userRepository.delete(id);
 
       if (affectedCount === 0) {
         throw UserError.NotFound();

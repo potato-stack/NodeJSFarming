@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 
 export class UserError extends ServerError {
 	constructor(message, statusCode) {
-		super(message, statusCode);
+		super("User Error: " + message, statusCode);
 	}
 
 	static Unauthorized(messge = "Invalid token") {

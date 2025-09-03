@@ -6,11 +6,11 @@ export class ServerError extends Error {
     this.statusCode = status || StatusCodes.INTERNAL_SERVER_ERROR;
   }
 
-  static MiddleWare(msg = 'Middleware Error') {
+  static DomainError(msg = 'Validate Error') {
     return new ServerError(msg);
   }
 
-  static DatabaseError(msg = 'Database Error') {
+  static InfraError(msg = 'Infrastructure Error') {
     return new ServerError(msg);
   }
 
@@ -21,7 +21,7 @@ export class ServerError extends Error {
 
 export const HandleServerError = (error) => {
   // Fall back for database connection error or undefined error
-  if (error.name === 'SequelizeDatabaseError') throw ServerError.DatabaseError(error);
+  if (error.name === 'SequelizeDatabaseError') throw ServerError.InfraError(error);
   // Forward the error
   throw error;
 };

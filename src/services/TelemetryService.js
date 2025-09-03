@@ -1,21 +1,25 @@
-import { TelemetryDevices } from '../repository/sequelize/Device.js';
+import { DeviceRepository } from '../infrastructure/repository/DeviceRepository.js';
 import { DeviceError } from '../errors/DeviceError.js';
 import { HandleServerError } from '../errors/ServerError.js';
+import { Device } from '../domains/entities/Device.js';
+
+const deviceRepository = new DeviceRepository();
 
 export class TelemetryServices {
-  async createDevice(props) {
+  async createDevice(createDeviceDto) {
     try {
-      const device = await TelemetryDevices.create({ ...props });
-      return device;
+      const device = new Device(createDeviceDto);
+      return await deviceRepository.create(device);
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') throw DeviceError.Conflict();
       HandleServerError(error);
     }
   }
 
-  async getDeviceByID(id) {
+  async getDeviceByID(GetDeviceDto) {
     try {
-      const device = await TelemetryDevices.findByPk(id);
+      const id = GetDeviceDto.id;
+      const device = await deviceRepository.getByID(id);
       if (!device) {
         throw DeviceError.NotFound(`Device with ID ${id} not found`);
       }
@@ -27,7 +31,7 @@ export class TelemetryServices {
 
   async getAllDevices() {
     try {
-      const devices = await TelemetryDevices.findAll();
+      const devices = await deviceRepository.get();
       if (devices.length === 0) {
         throw DeviceError.NotFound('No devices found');
       }
@@ -37,9 +41,10 @@ export class TelemetryServices {
     }
   }
 
-  async updateDevice(id, props) {
+  async updateDevice(props) {
     try {
-      const [affectedCount] = await TelemetryDevices.update(id, { ...props });
+      const device = new Device(props);
+      const [affectedCount] = await deviceRepository.update(device);
       if (affectedCount === 0) {
         throw DeviceError.NotFound(`Device with ID ${id} not found`);
       }
@@ -51,7 +56,7 @@ export class TelemetryServices {
 
   async deleteDevice(id) {
     try {
-      const affectedCount = await TelemetryDevices.destroy({ where: { id } });
+      const affectedCount = await deviceRepository.delete(id);
 
       if (affectedCount === 0) {
         throw DeviceError.NotFound();

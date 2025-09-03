@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 
 export class DeviceError extends ServerError {
     constructor(message, statusCode) {
-        super(message, statusCode);
+        super("Device Error: " + message, statusCode);
     }
 
     static NotFound(message = "Device Is Not Found") {
