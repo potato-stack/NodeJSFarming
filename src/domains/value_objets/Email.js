@@ -14,7 +14,7 @@ export class Email {
 
     const { error } = schema.validate(value);
     if (error) {
-      ServerError.DomainError(`Emails Error: ${error.details.map((d) => d.message).join(', ')}`);
+      throw ServerError.DomainError(`Emails Error: ${error.details.map((d) => d.message).join(', ')}`);
     }
     this.value = value;
   }

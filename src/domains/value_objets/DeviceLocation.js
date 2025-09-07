@@ -7,7 +7,7 @@ export class DeviceLocation {
 
     const { error } = schema.validate(value);
     if (error) {
-      ServerError.DomainError(`Errors: ${error.details.map((d) => d.message).join(', ')}`);
+      throw ServerError.DomainError(`Errors: ${error.details.map((d) => d.message).join(', ')}`);
     }
     this.value = value;
   }

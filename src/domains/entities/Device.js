@@ -7,7 +7,7 @@ import { DeviceError } from '../../errors/DeviceError.js';
 export class Device {
   constructor(createDeviceDto) {
     try {
-      this.type = new DeviceType(createDeviceDto.type).value;
+      this.type = new DeviceType(createDeviceDto.type).value; 
       this.name = new Name(createDeviceDto.name).value;
       this.location = new DeviceLocation(createDeviceDto.location).value;
       this.status = new DeviceStatus(createDeviceDto.status).value;

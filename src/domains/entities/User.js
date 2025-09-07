@@ -4,11 +4,11 @@ import { Password } from '../value_objets/Password.js';
 import { Email } from '../value_objets/Email.js';
 
 export class User {
-  constructor(createUserDto) {
+  constructor(createUserDto, hash = false) {
     try {
       this.name = new Name(createUserDto.name).value;
       this.email = new Email(createUserDto.email).value;
-      this.password = new Password(createUserDto.password).value;
+      this.password = new Password(createUserDto.password, hash).value;
     } catch (error) {
       throw UserError.Validation(error);
     }

@@ -36,7 +36,7 @@ export class UsersController {
 
   getUserByID = async (req, res, next) => {
     try {
-      const id = Number(req.user.id);
+      const id = req.user.id;
       const device = await UsersController.getService().getUserByID(id);
       res.status(StatusCodes.OK).json(device);
     } catch (error) {
@@ -55,7 +55,7 @@ export class UsersController {
 
   updateUser = async (req, res, next) => {
     try {
-      const id = Number(req.params.id);
+      const id = req.params.id;
       const newUser = new RegisterDto(req.body);
       const response = await UsersController.getService().createUser(newUser, {
         where: { id: id },
@@ -68,7 +68,7 @@ export class UsersController {
 
   deleteUser = async (req, res, next) => {
     try {
-      const id = Number(req.params.id);
+      const id = req.params.id;
       const user = await UsersController.getService().deleteUser(id);
       res.status(StatusCodes.OK).json(user);
     } catch (error) {

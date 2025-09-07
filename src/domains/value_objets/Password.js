@@ -14,7 +14,7 @@ export class Password {
 
     const { error } = schema.validate(value);
     if (error) {
-      ServerError.DomainError(`Pass Error: ${error.details.map((d) => d.message).join(', ')}`);
+      throw ServerError.DomainError(`Pass Error: ${error.details.map((d) => d.message).join(', ')}`);
     }
     this.value = isHased ? hashPassword(value) : value;
   }

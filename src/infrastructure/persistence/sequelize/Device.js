@@ -5,8 +5,8 @@ export class TelemetryDevices extends Model { }
 
 TelemetryDevices.init({
     id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true
     },
     type: {

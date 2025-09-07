@@ -32,7 +32,7 @@ export class TelemetryServices {
   async getAllDevices() {
     try {
       const devices = await deviceRepository.get();
-      if (devices.length === 0) {
+      if (!devices) {
         throw DeviceError.NotFound('No devices found');
       }
       return devices;

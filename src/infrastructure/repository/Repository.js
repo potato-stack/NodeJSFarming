@@ -27,7 +27,7 @@ export class BaseRepository {
   }
 
   async delete(id) {
-    const affectedCount = await this.model.destroy({ id: id });
+    const affectedCount = await this.model.destroy({ where: { id } });
     return affectedCount > 0;
   }
 }
