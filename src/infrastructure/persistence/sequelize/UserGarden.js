@@ -34,5 +34,11 @@ UserGardens.init(
     modelName: 'UserGardens',
     tableName: 'user_gardens',
     timestamps: false, // We need create/update date
+    indexes: [
+      {
+        unique: true,
+        fields: ['user_id', 'garden_id'], // ensures one user-garden pair only once
+      },
+    ],
   },
 );

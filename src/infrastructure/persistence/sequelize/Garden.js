@@ -1,9 +1,9 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../../config/Database.js';
 
-export class Garden extends Model {}
+export class Gardens extends Model {}
 
-Garden.init(
+Gardens.init(
   {
 	id: {
 	  type: DataTypes.UUID,
