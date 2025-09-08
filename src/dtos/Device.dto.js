@@ -23,6 +23,6 @@ export class DeviceInfoDto extends CreateDeviceDto {
 export class updateDeviceDto extends CreateDeviceDto {
   constructor({ targetId, type, name, location, status }) {
     super({ type, name, location, status });
-    this.id = targetId;
+    this.targetId = targetId;
   }
 }

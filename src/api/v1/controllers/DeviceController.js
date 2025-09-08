@@ -23,7 +23,7 @@ export class TelemetryController {
       // Bubble up the error
       next(error);
     }
-  }
+  };
 
   getDeviceByID = async (req, res, next) => {
     try {
@@ -33,7 +33,7 @@ export class TelemetryController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   getAllDevice = async (req, res, next) => {
     try {
@@ -42,17 +42,20 @@ export class TelemetryController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   updateDevice = async (req, res, next) => {
     try {
+      const id = req.params.id;
       const updateTarget = new CreateDeviceDto(req.body);
-      const response = await TelemetryController.getService().updateDevice(updateTarget);
+      const response = await TelemetryController.getService().updateDevice(updateTarget, {
+        id: id,
+      });
       res.status(StatusCodes.OK).json(response);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   deleteDevice = async (req, res, next) => {
     try {
@@ -62,5 +65,5 @@ export class TelemetryController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }

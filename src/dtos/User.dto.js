@@ -29,10 +29,23 @@ export class UserInfoDto {
   }
 }
 
-export class UserGardenDto {
-  constructor({ user_id, garden_id, role }) {
+export class UpdateUserDto extends RegisterDto {
+  constructor({ targetId, name, email, password }) {
+    super({ name, email, password });
+    this.targetId = targetId;
+  }
+}
+
+export class UserGardensQueryDto {
+  constructor({ user_id, garden_id }) {
     this.user_id = user_id;
-    this.garden_id = garden_id;
+    this.garden_id = garden_id || null;
+  }
+}
+
+export class UsersOfGardenDto extends UserInfoDto {
+  constructor({ id, name, email, createdAt, updatedAt, role }) {
+    super({ id, name, email, createdAt, updatedAt });
     this.role = role;
   }
 }

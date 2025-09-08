@@ -21,7 +21,7 @@ export class UsersController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   loginUser = async (req, res, next) => {
     try {
@@ -32,7 +32,7 @@ export class UsersController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   getUserByID = async (req, res, next) => {
     try {
@@ -42,7 +42,7 @@ export class UsersController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   getAllUsers = async (req, res, next) => {
     try {
@@ -51,20 +51,18 @@ export class UsersController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   updateUser = async (req, res, next) => {
     try {
       const id = req.params.id;
       const newUser = new RegisterDto(req.body);
-      const response = await UsersController.getService().updateUser(newUser, {
-        where: { id: id },
-      });
+      const response = await UsersController.getService().updateUser(newUser, { id: id });
       res.status(StatusCodes.OK).json(response);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   deleteUser = async (req, res, next) => {
     try {
@@ -74,5 +72,5 @@ export class UsersController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }

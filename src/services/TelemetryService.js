@@ -6,7 +6,7 @@ import { Device } from '../domains/entities/Device.js';
 const deviceRepository = new DeviceRepository();
 
 export class TelemetryServices {
-  async createDevice(createDeviceDto) {
+  createDevice = async (createDeviceDto) => {
     try {
       const device = new Device(createDeviceDto);
       return await deviceRepository.create(device);
@@ -14,9 +14,9 @@ export class TelemetryServices {
       if (error.name === 'SequelizeUniqueConstraintError') throw DeviceError.Conflict();
       HandleServerError(error);
     }
-  }
+  };
 
-  async getDeviceByID(GetDeviceDto) {
+  getDeviceByID = async (GetDeviceDto) => {
     try {
       const id = GetDeviceDto.id;
       const device = await deviceRepository.getByID(id);
@@ -27,22 +27,21 @@ export class TelemetryServices {
     } catch (error) {
       HandleServerError(error);
     }
-  }
+  };
 
-  async getAllDevices() {
+  getAllDevices = async () => {
     try {
       const devices = await deviceRepository.get();
       return devices;
     } catch (error) {
       HandleServerError(error);
     }
-  }
+  };
 
-  async updateDevice(props) {
+  updateDevice = async (UpdateDeviceDto, where) => {
     try {
-      const device = new Device(props);
-      const targetId = props.id;
-      const [affectedCount] = await deviceRepository.update(device, {id: targetId});
+      const device = new Device(UpdateDeviceDto);
+      const [affectedCount] = await deviceRepository.update(device, where);
       if (affectedCount === 0) {
         throw DeviceError.NotFound(`Device with ID ${id} not found`);
       }
@@ -50,9 +49,9 @@ export class TelemetryServices {
     } catch (error) {
       HandleServerError(error);
     }
-  }
+  };
 
-  async deleteDevice(id) {
+  deleteDevice = async (id) => {
     try {
       const affectedCount = await deviceRepository.delete(id);
 
@@ -63,5 +62,5 @@ export class TelemetryServices {
     } catch (error) {
       HandleServerError(error);
     }
-  }
+  };
 }

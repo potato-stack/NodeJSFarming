@@ -1,25 +1,34 @@
 export class CreateGardenDto {
-  constructor({name}) {
+  constructor({ name }) {
     this.name = name || '';
   }
 }
-export class GetGardenDto {
-  // Only used for practice, this is purely unecessary
-  constructor({ id }) {
-    this.id = id;
+
+export class GardensUserQueryDto {
+  constructor({ garden_id, user_id }) {
+    this.garden_id = garden_id;
+    this.user_id = user_id || null;
   }
 }
-export class DeviceInfoDto extends CreateDeviceDto {
-  constructor({ id, type, name, location, status, createAt, updatedAt }) {
-    super({ type, name, location, status });
+
+export class GardenInfoDto extends CreateGardenDto {
+  constructor({ id, name, createAt, updatedAt }) {
+    super({ name });
     this.id = id;
-this.createAt = createAt;
+    this.createAt = createAt;
     this.updatedAt = updatedAt;
   }
 }
-export class updateDeviceDto extends CreateDeviceDto {
-  constructor({ targetId, type, name, location, status }) {
-    super({ type, name, location, status });
-    this.id = targetId;
+export class updateGardenDto extends CreateGardenDto {
+  constructor({ targetId, name }) {
+    super({ name });
+    this.targetId = targetId;
+  }
+}
+
+export class GardensOfUserResponseDto extends GardenInfoDto {
+  constructor({ id, name, createAt, updatedAt, role }) {
+    super({ id, name, createAt, updatedAt });
+    this.role = role;
   }
 }

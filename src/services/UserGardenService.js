@@ -31,7 +31,7 @@ export class GardenManageService {
     }
   };
 
-  getUserOfGardenRole = async (gardenId, userId) => {
+  getUserRoleOfGarden = async (gardenId, userId) => {
     try {
       const userOfGarden = UserGardenRepository.get({ user_id: userId, garden_id: gardenId });
       if (!userOfGarden) throw UserError.NotFound('User not belong to garden!');
