@@ -32,9 +32,6 @@ export class TelemetryServices {
   async getAllDevices() {
     try {
       const devices = await deviceRepository.get();
-      if (!devices) {
-        throw DeviceError.NotFound('No devices found');
-      }
       return devices;
     } catch (error) {
       HandleServerError(error);
@@ -44,7 +41,8 @@ export class TelemetryServices {
   async updateDevice(props) {
     try {
       const device = new Device(props);
-      const [affectedCount] = await deviceRepository.update(device);
+      const targetId = props.id;
+      const [affectedCount] = await deviceRepository.update(device, {id: targetId});
       if (affectedCount === 0) {
         throw DeviceError.NotFound(`Device with ID ${id} not found`);
       }

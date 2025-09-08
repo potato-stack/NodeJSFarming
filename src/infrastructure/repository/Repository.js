@@ -21,13 +21,13 @@ export class BaseRepository {
     return new this.DomainClass(record);
   }
 
-  async update(newEntity) {
-    const [affectedCount] = await this.model.update({ ...newEntity }, { id: newEntity.id });
+  async update(newEntity, where) {
+    const [affectedCount] = await this.model.update({ ...newEntity }, { where: { where } });
     return affectedCount > 0;
   }
 
-  async delete(id) {
-    const affectedCount = await this.model.destroy({ where: { id } });
+  async delete(where) {
+    const affectedCount = await this.model.destroy({ where: { where } });
     return affectedCount > 0;
   }
 }

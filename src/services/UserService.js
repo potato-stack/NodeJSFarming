@@ -3,7 +3,8 @@ import { UserRepository } from '../infrastructure/repository/UserRepository.js';
 import { UserError } from '../errors/UserError.js';
 import { HandleServerError } from '../errors/ServerError.js';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
+
 
 const userRepository = new UserRepository();
 // Private methods
@@ -12,20 +13,6 @@ const createJWT = (payload, expireTime) => {
 };
 
 export class UsersService {
-  // For mock only
-  // I am so tried :((
-  constructor() {
-    this.gardens = [
-      { id: 1, name: 'Rose Garden', location_text: 'North side of park' },
-      { id: 2, name: 'Tropical Garden', location_text: 'Greenhouse' },
-      { id: 3, name: 'Herb Garden', location_text: 'Backyard' },
-    ];
-
-    // To mock we will have a user hold abunch of garden in Array manner!
-    this.userGardens = {};
-  }
-
-  // Public
   register = async (userDto) => {
     try {
       const user = new User(userDto, true);
@@ -39,7 +26,7 @@ export class UsersService {
   login = async (loginDto) => {
     try {
       const { email, password } = loginDto;
-      const [user] = await userRepository.get({email});
+      const [user] = await userRepository.get({ email });
       if (!user) {
         throw UserError.NotFound();
       }
@@ -70,19 +57,16 @@ export class UsersService {
   getAllUsers = async () => {
     try {
       const users = await userRepository.get();
-      if (users.length === 0) {
-        throw UserError.NotFound('No user found');
-      }
       return users;
     } catch (error) {
       HandleServerError(error);
     }
   };
 
-  updateUser = async (userDto) => {
+  updateUser = async (userDto, where) => {
     try {
       const targetUpdate = new User(userDto);
-      const [affectedCount] = await userRepository.update(targetUpdate);
+      const [affectedCount] = await userRepository.update(targetUpdate, where);
       if (affectedCount === 0) {
         throw UserError.NotFound(`User with ID ${targetUpdate.id} not found`);
       }
@@ -103,36 +87,5 @@ export class UsersService {
     } catch (error) {
       HandleServerError(error);
     }
-  };
-
-  adduserToGarden = async (userId, gardenId, role) => {
-    const garden = this.gardens.find((garden) => garden.id === gardenId);
-    if (!garden) throw UserError.NotFound('Cannot find garden to add user!');
-
-    if (!this.userGardens[userId]) this.userGardens[userId] = [];
-    else if (this.userGardens[userId].includes(gardenid)) {
-      throw UserError.Conflict('User already assigned to this garden!');
-    }
-
-    this.userGardens[userId].push(gardenId);
-    return { userId, gardenId, role };
-  };
-
-  removeUserFromGarden = async (userId, gardenId) => {
-    try {
-      if (!this.userGardens[userId] || !this.userGardens[userId].includes(gardenId)) {
-        throw new UserError.NotFound('User is not assigned to this garden');
-      }
-
-      this.userGardens[userId] = this.userGardens[userId].filter((id) => id !== gardenId);
-      return { userId, gardenId };
-    } catch (error) {
-      HandleServerError(error);
-    }
-  };
-
-  getAllGardensOfUser = async (userId) => {
-    if (!this.userGardens[userId]) return [];
-    return this.gardens.filter((garden) => this.userGardens[userId].includes(garden.id));
   };
 }

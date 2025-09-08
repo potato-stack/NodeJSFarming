@@ -57,12 +57,12 @@ export class UsersController {
     try {
       const id = req.params.id;
       const newUser = new RegisterDto(req.body);
-      const response = await UsersController.getService().createUser(newUser, {
+      const response = await UsersController.getService().updateUser(newUser, {
         where: { id: id },
       });
       res.status(StatusCodes.OK).json(response);
     } catch (error) {
-      next(errora);
+      next(error);
     }
   }
 

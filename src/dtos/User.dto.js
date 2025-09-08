@@ -1,5 +1,3 @@
-import { use } from 'react';
-
 export class RegisterDto {
   constructor({ name, email, password }) {
     this.name = name;

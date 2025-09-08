@@ -1,12 +1,9 @@
-export class CreateDeviceDto {
-  constructor({ type, name, location, status }) {
-    this.type = type;
+export class CreateGardenDto {
+  constructor({name}) {
     this.name = name || '';
-    this.location = location || 'unknown';
-    this.status = status || 'unknown'; // online/offline/unknown
   }
 }
-export class GetDeviceDto {
+export class GetGardenDto {
   // Only used for practice, this is purely unecessary
   constructor({ id }) {
     this.id = id;
@@ -16,7 +13,7 @@ export class DeviceInfoDto extends CreateDeviceDto {
   constructor({ id, type, name, location, status, createAt, updatedAt }) {
     super({ type, name, location, status });
     this.id = id;
-    this.createAt = createAt;
+this.createAt = createAt;
     this.updatedAt = updatedAt;
   }
 }

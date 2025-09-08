@@ -1,7 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../../config/Database.js';
 
-export class UserGardens extends Model {}
+export class UserGardens extends Model { }
 
 UserGardens.init(
   {
