@@ -5,7 +5,7 @@ import { Garden } from '../domains/entities/Garden.js';
 
 const gardenRepository = new GardenRepository();
 
-export class TelemetryServices {
+export class GardenServices {
   async createGarden(createGardenDto) {
 	try {
 	  const garden = new Garden(createGardenDto);
@@ -41,7 +41,7 @@ export class TelemetryServices {
   async updateGarden(updateGardenDto) {
 	try {
 	  const garden = new Garden(updateGardenDto);
-	  const targetId = updateGardenDto.id;
+	  const targetId = updateGardenDto.targetId;
 	  const [affectedCount] = await gardenRepository.update(garden, {id: targetId});
 	  if (affectedCount === 0) {
 		throw GardenError.NotFound(`Garden with ID ${id} not found`);
@@ -52,7 +52,7 @@ export class TelemetryServices {
 	}
   }
 
-  async deleteDevice(id) {
+  async deleteGarden(id) {
 	try {
 	  const affectedCount = await gardenRepository.delete(id);
 

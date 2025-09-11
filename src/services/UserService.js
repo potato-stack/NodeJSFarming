@@ -63,10 +63,11 @@ export class UsersService {
     }
   };
 
-  updateUser = async (userDto, where) => {
+  updateUser = async (userDto) => {
     try {
-      const targetUpdate = new User(userDto, true);
-      const [affectedCount] = await userRepository.update(targetUpdate, where);
+      const targetUpdate = new User(userDto);
+      const targetId = userDto.targetId;
+      const [affectedCount] = await userRepository.update(targetUpdate, {id: targetId});
       if (affectedCount === 0) {
         throw UserError.NotFound(`User with ID ${targetUpdate.id} not found`);
       }

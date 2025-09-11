@@ -2,6 +2,7 @@ import { DeviceRepository } from '../infrastructure/repository/DeviceRepository.
 import { DeviceError } from '../errors/DeviceError.js';
 import { HandleServerError } from '../errors/ServerError.js';
 import { Device } from '../domains/entities/Device.js';
+import { updateDeviceDto } from '../dtos/Device.dto.js';
 
 const deviceRepository = new DeviceRepository();
 
@@ -38,10 +39,11 @@ export class TelemetryServices {
     }
   };
 
-  updateDevice = async (UpdateDeviceDto, where) => {
+  updateDevice = async (UpdateDeviceDto) => {
     try {
       const device = new Device(UpdateDeviceDto);
-      const [affectedCount] = await deviceRepository.update(device, where);
+      const targetId = updateDeviceDto.targetId;
+      const [affectedCount] = await deviceRepository.update(device, {id: targetId});
       if (affectedCount === 0) {
         throw DeviceError.NotFound(`Device with ID ${id} not found`);
       }

@@ -4,13 +4,6 @@ export class CreateGardenDto {
   }
 }
 
-export class GardensUserQueryDto {
-  constructor({ garden_id, user_id }) {
-    this.garden_id = garden_id;
-    this.user_id = user_id || null;
-  }
-}
-
 export class GardenInfoDto extends CreateGardenDto {
   constructor({ id, name, createAt, updatedAt }) {
     super({ name });
@@ -26,9 +19,4 @@ export class updateGardenDto extends CreateGardenDto {
   }
 }
 
-export class GardensOfUserResponseDto extends GardenInfoDto {
-  constructor({ id, name, createAt, updatedAt, role }) {
-    super({ id, name, createAt, updatedAt });
-    this.role = role;
-  }
-}
+

@@ -4,16 +4,21 @@ import { UserRepository } from '../infrastructure/repository/UserRepository.js';
 import { HandleServerError } from '../errors/ServerError.js';
 import { GardenError } from '../errors/GardenError.js';
 import { UserError } from '../errors/UserError.js';
+import { UserGarden } from '../domains/entities/UserGarden.js';
 
 export class GardenManageService {
-  addUserToGarden = async (userId, gardenId, role) => {
+  addUserToGarden = async (GardenUsersRelationDto) => {
     try {
-      const garden = GardenRepository.getByID(gardenId);
+      const garden = GardenRepository.getByID(GardenUsersRelationDto.gardenId);
       if (!garden) throw GardenError.NotFound('Garden is not exist!');
-      const userOfGarden = UserGardenRepository.get({ user_id: userId, garden_id: gardenId });
+      const userOfGarden = UserGardenRepository.get({
+        user_id: GardenUsersRelationDto.user_id,
+        garden_id: GardenUsersRelationDto.garden_id,
+      });
       if (userOfGarden) throw UserError.NotFound('User already belong to garden!');
 
-      return await UserGardenRepository.create({ userId, gardenId, role });
+      const userGarden = new UserGarden(GardenUsersRelationDto);
+      return await UserGardenRepository.create(userGarden);
     } catch (error) {
       HandleServerError(error);
     }
@@ -31,9 +36,12 @@ export class GardenManageService {
     }
   };
 
-  getUserRoleOfGarden = async (gardenId, userId) => {
+  getUserRoleOfGarden = async (GardenUserDto) => {
     try {
-      const userOfGarden = UserGardenRepository.get({ user_id: userId, garden_id: gardenId });
+      const userOfGarden = UserGardenRepository.get({
+        user_id: GardenUserDto.user_id,
+        garden_id: GardenUserDto.garden_id,
+      });
       if (!userOfGarden) throw UserError.NotFound('User not belong to garden!');
       return userOfGarden.role;
     } catch (error) {
@@ -41,9 +49,12 @@ export class GardenManageService {
     }
   };
 
-  removeUserFromGarden = async (gardenId, userId) => {
+  removeUserFromGarden = async (GardenUserDto) => {
     try {
-      const affectedCount = UserGardenRepository.delete({ user_id: userId, garden_id: gardenId });
+      const affectedCount = UserGardenRepository.delete({
+        user_id: GardenUserDto.user_id,
+        garden_id: GardenUserDto.garden_id,
+      });
       if (affectedCount === 0) {
         throw UserError.NotFound('User not belong to garden!');
       }
@@ -52,12 +63,13 @@ export class GardenManageService {
     }
   };
 
-  updateUserRoleOfGarden = async (gardenId, userId, role) => {
+  updateUserRoleOfGarden = async (GardenUsersRelationDto) => {
     try {
-      const [affectedCount] = await UserGardenRepository.update(
-        { role: role },
-        { where: { user_id: userId, garden_id: gardenId } },
-      );
+      const newUpdate = new UserGarden(GardenUsersRelationDto);
+      const [affectedCount] = await UserGardenRepository.update(newUpdate, {
+        user_id: GardenUsersRelationDto.user_id,
+        garden_id: GardenUsersRelationDto.garden_id,
+      });
       if (affectedCount === 0) throw UserError.NotFound('User not found or cannot update role!');
     } catch (error) {
       HandleServerError(error);

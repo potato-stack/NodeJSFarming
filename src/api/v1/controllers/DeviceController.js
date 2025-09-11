@@ -1,6 +1,6 @@
 import StatusCodes from 'http-status-codes';
 import { TelemetryServices } from '../../../services/TelemetryService.js';
-import { CreateDeviceDto } from '../../../dtos/Device.dto.js';
+import { CreateDeviceDto, updateDeviceDto } from '../../../dtos/Device.dto.js';
 
 export class TelemetryController {
   static telemetryServices = null;
@@ -46,11 +46,8 @@ export class TelemetryController {
 
   updateDevice = async (req, res, next) => {
     try {
-      const id = req.params.id;
-      const updateTarget = new CreateDeviceDto(req.body);
-      const response = await TelemetryController.getService().updateDevice(updateTarget, {
-        id: id,
-      });
+      const updateTarget = new updateDeviceDto(req.body);
+      const response = await TelemetryController.getService().updateDevice(updateTarget);
       res.status(StatusCodes.OK).json(response);
     } catch (error) {
       next(error);
