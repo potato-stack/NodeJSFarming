@@ -6,7 +6,7 @@ const hashPassword = (password) => {
   return bcrypt.hashSync(password, 12);
 };
 export class Password {
-   constructor(value, isHased = false) {
+   constructor(value) {
     const schema = Joi.string()
       .min(8)
       .required()
@@ -16,6 +16,10 @@ export class Password {
     if (error) {
       throw ServerError.DomainError(`Pass Error: ${error.details.map((d) => d.message).join(', ')}`);
     }
-    this.value = isHased ? hashPassword(value) : value;
+    this.value = hashPassword(value);
   }
+
+  equals = async (input) => {
+    return bcrypt.compare(input, this.hash);
+  } 
 }

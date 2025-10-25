@@ -2,6 +2,7 @@ import { GardenRepository } from '../infrastructure/repository/GardenRepository.
 import { GardenError } from '../errors/GardenError.js';
 import { HandleServerError } from '../errors/ServerError.js';
 import { Garden } from '../domains/entities/Garden.js';
+import { GardenInfoDto } from '../dtos/Garden.dto.js';
 
 const gardenRepository = new GardenRepository();
 
@@ -9,7 +10,8 @@ export class GardenServices {
   async createGarden(createGardenDto) {
 	try {
 	  const garden = new Garden(createGardenDto);
-	  return await gardenRepository.create(garden);
+	  const newGarden = await gardenRepository.create(garden);
+	  return new GardenInfoDto(newGarden);
 	} catch (error) {
 	  if (error.name === 'SequelizeUniqueConstraintError') throw GardenError.Conflict();
 	  HandleServerError(error);
@@ -23,7 +25,7 @@ export class GardenServices {
 	  if (!garden) {
 		throw GardenError.NotFound(`Garden with ID ${id} not found`);
 	  }
-	  return garden;
+	  return new GardenInfoDto(garden);
 	} catch (error) {
 	  HandleServerError(error);
 	}
@@ -32,7 +34,7 @@ export class GardenServices {
   async getAllGardens() {
 	try {
 	  const gardens = await gardenRepository.get();
-	  return gardens;
+	  return gardens.map((r) => new GardenInfoDto(r));
 	} catch (error) {
 	  HandleServerError(error);
 	}

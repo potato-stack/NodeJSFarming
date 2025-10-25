@@ -4,6 +4,7 @@ import { UserError } from '../errors/UserError.js';
 import { HandleServerError } from '../errors/ServerError.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { UserInfoDto } from '../dtos/User.dto.js';
 
 
 const userRepository = new UserRepository();
@@ -15,8 +16,9 @@ const createJWT = (payload, expireTime) => {
 export class UsersService {
   register = async (userDto) => {
     try {
-      const user = new User(userDto, true);
-      return await userRepository.create(user);
+      const user = new User(userDto);
+      const newUser = await userRepository.create(user);
+      return new UserInfoDto(newUser);
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') throw UserError.Conflict();
       HandleServerError(error);
@@ -30,13 +32,13 @@ export class UsersService {
       if (!user) {
         throw UserError.NotFound();
       }
-      const isMatch = await bcrypt.compare(password, user.password);
+      const isMatch = await user.password.equals(password);
       if (!isMatch) {
         throw UserError.Unauthorized('Wrong password! Please re-enter');
       }
       // Use private method
       const token = createJWT({ id: user.id, email: user.email }, '30m');
-      return { token, user };
+      return new LoginResponseDto(token);
     } catch (error) {
       HandleServerError(error);
     }
@@ -48,7 +50,7 @@ export class UsersService {
       if (!user) {
         throw UserError.NotFound(`User with ID ${id} not found`);
       }
-      return user;
+      return new UserInfoDto(user);
     } catch (error) {
       HandleServerError(error);
     }
@@ -57,7 +59,7 @@ export class UsersService {
   getAllUsers = async () => {
     try {
       const users = await userRepository.get();
-      return users;
+      return users.map((r) => new UserInfoDto(r));
     } catch (error) {
       HandleServerError(error);
     }

@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { UsersService } from '../../../services/UserService.js';
-import { LoginDto, RegisterDto } from '../../../dtos/User.dto.js';
+import { LoginDto, RegisterDto, UpdateUserDto } from '../../../dtos/User.dto.js';
 
 export class UsersController {
   static userServices = null;
@@ -56,7 +56,7 @@ export class UsersController {
   updateUser = async (req, res, next) => {
     try {
       const id = req.params.id;
-      const newUser = new RegisterDto(req.body);
+      const newUser = new UpdateUserDto(req.body);
       const response = await UsersController.getService().updateUser(newUser, { id: id });
       res.status(StatusCodes.OK).json(response);
     } catch (error) {

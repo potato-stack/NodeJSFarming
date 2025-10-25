@@ -5,28 +5,29 @@ export class BaseRepository {
     this.DomainClass = DomainClass;
   }
 
-  async getByID(id) {
+  getByID  = async (id) => {
     const record = await this.model.findByPk(id);
     return record ? new this.DomainClass(record) : null;
   }
 
-  async get(where = {}) {
+  get = async (where = {}) => {
     const records = await this.model.findAll(Object.keys(where).length > 0 ? { where } : undefined);
     return records.length ? records.map((r) => new this.DomainClass(r)) : null;
   }
 
-  async create(entity) {
+  create = async (entity) => {
     await sequelize.sync({ force: true });
     const record = await this.model.create({ ...entity });
     return new this.DomainClass(record);
   }
 
-  async update(newEntity, where) {
-    const [affectedCount] = await this.model.update({ ...newEntity }, { where: { where } });
+  update = async (newEntity, where) => {
+    const payload = Object.fromEntries(Object.entries(newEntity).filter(([_, v]) => v !== undefined));
+    const [affectedCount] = await this.model.update(payload, { where: { where } });
     return affectedCount > 0;
   }
 
-  async delete(where) {
+  delete = async (where) => {
     const affectedCount = await this.model.destroy({ where: { where } });
     return affectedCount > 0;
   }

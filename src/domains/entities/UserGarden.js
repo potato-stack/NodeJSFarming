@@ -2,12 +2,12 @@ import { UserError } from '../../errors/UserError.js';
 import { Roles } from '../value_objets/roles.js';
 
 export class UserGarden {
-  constructor(userGardenData) {
+  constructor(userGardenProps) {
     try {
       // No need construct value here since two id only key
-      this.user_id = userGardenData.user_id;
-      this.garden_id = userGardenData.garden_id;
-      this.role = new Roles(userGardenData.role);
+      this.user_id = userGardenProps?.user_id ? userGardenProps.user_id : undefined;
+      this.garden_id = userGardenProps?.garden_id ? userGardenProps.garden_id : undefined;
+      this.role = userGardenProps?.role ? new Roles(userGardenProps.role) : undefined;
     } catch (error) {
       throw UserError.Validation(error);
     }
@@ -26,6 +26,6 @@ export class UserGarden {
   }
 
   setRole(newRole) {
-	this.role = new Roles(newRole);
+    this.role = new Roles(newRole);
   }
 }

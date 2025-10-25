@@ -5,6 +5,7 @@ import { HandleServerError } from '../errors/ServerError.js';
 import { GardenError } from '../errors/GardenError.js';
 import { UserError } from '../errors/UserError.js';
 import { UserGarden } from '../domains/entities/UserGarden.js';
+import { AddUserToGardenDto, UserGardenRelationDto } from '../dtos/UserGarden.dto.js';
 
 export class GardenManageService {
   addUserToGarden = async (GardenUsersRelationDto) => {
@@ -18,7 +19,8 @@ export class GardenManageService {
       if (userOfGarden) throw UserError.NotFound('User already belong to garden!');
 
       const userGarden = new UserGarden(GardenUsersRelationDto);
-      return await UserGardenRepository.create(userGarden);
+      const newUserOfGarden = await UserGardenRepository.create(userGarden);
+      return new UserGardenRelationDto(newUserOfGarden);
     } catch (error) {
       HandleServerError(error);
     }
@@ -30,7 +32,7 @@ export class GardenManageService {
       if (!user) throw UserError.NotFound('User not exist!');
 
       const gardensOfUser = UserGardenRepository.get({ user_id: userId });
-      return gardensOfUser;
+      return gardensOfUser.map((r) => new UserGardenRelationDto(gardensOfUser));
     } catch (error) {
       HandleServerError(error);
     }
@@ -58,6 +60,7 @@ export class GardenManageService {
       if (affectedCount === 0) {
         throw UserError.NotFound('User not belong to garden!');
       }
+      return { status: 'success', message: `Deleted user ${user_id} from garden ${garden_id}`};
     } catch (error) {
       HandleServerError(error);
     }
@@ -71,6 +74,7 @@ export class GardenManageService {
         garden_id: GardenUsersRelationDto.garden_id,
       });
       if (affectedCount === 0) throw UserError.NotFound('User not found or cannot update role!');
+      return { status: 'success', message: `Update user ${user_id} from garden ${garden_id}`};
     } catch (error) {
       HandleServerError(error);
     }

@@ -2,7 +2,7 @@ import { DeviceRepository } from '../infrastructure/repository/DeviceRepository.
 import { DeviceError } from '../errors/DeviceError.js';
 import { HandleServerError } from '../errors/ServerError.js';
 import { Device } from '../domains/entities/Device.js';
-import { updateDeviceDto } from '../dtos/Device.dto.js';
+import { DeviceInfoDto, updateDeviceDto } from '../dtos/Device.dto.js';
 
 const deviceRepository = new DeviceRepository();
 
@@ -24,7 +24,7 @@ export class TelemetryServices {
       if (!device) {
         throw DeviceError.NotFound(`Device with ID ${id} not found`);
       }
-      return device;
+      return new DeviceInfoDto(device);
     } catch (error) {
       HandleServerError(error);
     }
@@ -33,7 +33,7 @@ export class TelemetryServices {
   getAllDevices = async () => {
     try {
       const devices = await deviceRepository.get();
-      return devices;
+      return devices.map((r) => new DeviceInfoDto(r));
     } catch (error) {
       HandleServerError(error);
     }

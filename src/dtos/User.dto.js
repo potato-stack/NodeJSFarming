@@ -24,8 +24,6 @@ export class UserInfoDto {
     this.id = id;
     this.name = name;
     this.email = email;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
   }
 }
 

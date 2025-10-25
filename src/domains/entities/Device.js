@@ -5,12 +5,18 @@ import { DeviceLocation } from '../value_objets/DeviceLocation.js';
 import { DeviceError } from '../../errors/DeviceError.js';
 
 export class Device {
-  constructor(createDeviceDto) {
+  constructor(deviceProps) {
     try {
-      this.type = new DeviceType(createDeviceDto.type).value; 
-      this.name = new Name(createDeviceDto.name).value;
-      this.location = new DeviceLocation(createDeviceDto.location).value;
-      this.status = new DeviceStatus(createDeviceDto.status).value;
+      this.type = deviceProps?.type ? new DeviceType(deviceProps.type).value : undefined;
+      this.name = deviceProps?.name ? new Name(deviceProps.name).value : undefined;
+      this.location = deviceProps?.location
+        ? new DeviceLocation(deviceProps.location).value
+        : undefined;
+      this.status = deviceProps?.status
+        ? new DeviceStatus(deviceProps.status).value
+        : undefined;
+    this.createAt = deviceProps?.createAt ? deviceProps.createAt : undefined;
+    this.updatedAt = deviceProps?.updatedAt ? deviceProps.updatedAt : undefined;
     } catch (error) {
       throw DeviceError.Validation(error);
     }
