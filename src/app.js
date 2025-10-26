@@ -11,8 +11,10 @@ import helmet from 'helmet'; // Secure HTTP header
 import cors from 'cors'; // Cross origin request
 import rateLimiter from 'express-rate-limit'; // Prevent bruteforce
 
-import { deviceRouter } from './api/v1/router/deviceRouter.js';
-import { userRouter } from './api/v1/router/userRouter.js';
+import { deviceRouter } from './api/v1/router/DeviceRoutes.js';
+import { userRouter } from './api/v1/router/UserRoutes.js';
+import { gardenRouter } from './api/v1/router/GardenRoutes.js';
+import { userGardenRouter } from './api/v1/router/UserGardenRoutes.js';
 import { validateCookie } from './middlewares/ValidateMiddleware.js';
 import { validateTokenSchema } from './api/v1/schemas/UserSchemas.js';
 import { authMiddleWare } from './middlewares/AuthMiddleware.js';
@@ -40,7 +42,9 @@ app.use(express.json());
 
 // Router
 app.use('/devices', validateCookie(validateTokenSchema), authMiddleWare, deviceRouter);
-app.use('/users', userRouter);
+app.use('/gardens', validateCookie(validateTokenSchema), authMiddleWare, gardenRouter);
+app.use('/gardens',validateCookie(validateTokenSchema), authMiddleWare,  userGardenRouter);
+app.use('/', userRouter);
 
 // Error handler
 app.use(errorHandlerMiddleware);

@@ -13,14 +13,14 @@ const userRouter = express.Router();
 const controller = new UsersController();
 
 userRouter
-  .post('/auth/register', validate(registerUserSchema), controller.register)
-  .post('/auth/login', validate(loginUserSchema), controller.loginUser);
+  .post('/auth/register', validate(registerUserSchema, 'body'), controller.register)
+  .post('/auth/login', validate(loginUserSchema, 'body'), controller.loginUser);
 userRouter.get(
   '/me',
   validateCookie(validateTokenSchema),
   authMiddleWare,
   validate(getUserByIdSchema),
-  controller.getUserByID,
+  controller.getCurrentUserByID,
 );
 
 export { userRouter };

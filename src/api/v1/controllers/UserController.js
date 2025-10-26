@@ -34,9 +34,9 @@ export class UsersController {
     }
   };
 
-  getUserByID = async (req, res, next) => {
+  getCurrentUserByID = async (req, res, next) => {
     try {
-      const id = req.user.id;
+      const id = req.currentUser.id;
       const device = await UsersController.getService().getUserByID(id);
       res.status(StatusCodes.OK).json(device);
     } catch (error) {

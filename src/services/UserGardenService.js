@@ -38,6 +38,18 @@ export class GardenManageService {
     }
   };
 
+  getUserByGardenId = async (gardenId) => {
+    try {
+      const garden = GardenRepository.getByID(gardenId);
+      if (!garden) throw UserError.NotFound('Garden not exist!');
+
+      const usersOfGarden = UserGardenRepository.get({ garden_id: gardenId});
+      return usersOfGarden.map((r) => new UserGardenRelationDto(gardensOfUser));
+    } catch (error) {
+      HandleServerError(error);
+    }
+  };
+
   getUserRoleOfGarden = async (GardenUserDto) => {
     try {
       const userOfGarden = UserGardenRepository.get({

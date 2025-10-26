@@ -8,7 +8,7 @@ export const authMiddleWare = (req, res, next) => {
     const token = req.cookies.token;
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     // Attach the payload back to the request
-    req.user = payload;
+   req.currentUser = payload;
     next();
   } catch (err) {
     next(UserError.Unauthorized(err));
