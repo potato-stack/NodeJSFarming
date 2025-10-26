@@ -17,7 +17,7 @@ export class GardenController {
   }
 
   static getGardenManageService() {
-    if (!GardenController.gardenServices) {
+    if (!GardenController.gardenManageService) {
       GardenController.gardenManageService = new GardenManageService();
     }
     return GardenController.gardenManageService;
@@ -30,9 +30,9 @@ export class GardenController {
       const currentUserId = req.currentUser.id;
       const createdGarden = await GardenController.getGardenService().createGarden(garden);
       const relation = new AddUserToGardenDto({
-        gardenId: createdGarden.id,
-        userId: currentUserId,
-        role: 'admin',
+        garden_id: createdGarden.id,
+        user_id: currentUserId,
+        role: 'owner',
       });
       const createdUserGarden =
         await GardenController.getGardenManageService().addUserToGarden(relation);
@@ -40,20 +40,20 @@ export class GardenController {
       res.status(StatusCodes.CREATED).json(createdUserGarden);
     } catch (error) {
       // Bubble up the error
+      next(error);
     }
-    next(error);
   };
 
   getGardenById = async (req, res, next) => {
     try {
       // Mappers
-      const currentUser = new GetUserOfGardenDto({
+      const relation = new GetUserOfGardenDto({
         garden_id: req.params.id,
         user_id: req.currentUser.id,
       });
-      const role = await GardenController.getGardenManageService().getUserRoleOfGarden(currentUser);
+      const role = await GardenController.getGardenManageService().getUserRoleOfGarden(relation);
       if (!role) throw GardenError.BadRequest('Not a member');
-      const gardenInfo = await GardenController.gardenServices().getGardenByID(req.params.id);
+      const gardenInfo = await GardenController.getGardenService().getGardenByID(req.params.id);
       res.status(StatusCodes.CREATED).json(gardenInfo);
     } catch (error) {
       // Bubble up the error
@@ -72,13 +72,13 @@ export class GardenController {
 
   getGardensOfCurrentUser = async (req, res, next) => {
     try {
-      const gardens = await UserGardenSharedController.getGardenManageService().getGardenByUserId(
+      const gardens = await GardenController.getGardenManageService().getGardenByUserId(
         req.currentUser.id,
       );
       const gardensInfo = [];
       for (const garden of gardens) {
         gardensInfo.push(
-          await UserGardenSharedController.getGardenService().getGardenByID(garden.garden_id),
+          await GardenController.getGardenService().getGardenByID(garden.garden_id),
         );
       }
       res.status(StatusCodes.OK).json(gardensInfo);
@@ -89,18 +89,17 @@ export class GardenController {
 
   updateGarden = async (req, res, next) => {
     try {
-      const currentUser = new GetUserOfGardenDto({
+      const relation = new GetUserOfGardenDto({
         garden_id: req.params.id,
         user_id: req.currentUser.id,
       });
       const userRole =
-        await GardenController.getGardenManageService().getUserRoleOfGarden(currentUser);
-      if (userRole !== 'admin')
+        await GardenController.getGardenManageService().getUserRoleOfGarden(relation);
+      if (userRole.value !== 'owner')
         throw GardenError.BadRequest('This action must be done by the garden owner!');
 
-      const newGarden = new updateGardenDto(req.body);
-      const response = GardenController.getGardenService().updateGarden(newGarden);
-
+      const newGarden = new updateGardenDto({name: req.body.name, targetId: req.params.id});
+      const response = await GardenController.getGardenService().updateGarden(newGarden);
       res.status(StatusCodes.OK).json(response);
     } catch (error) {
       next(error);
@@ -109,17 +108,16 @@ export class GardenController {
 
   deleteGarden = async (req, res, next) => {
     try {
-      const currentUser = new GetUserOfGardenDto({
+      const relation = new GetUserOfGardenDto({
         garden_id: req.params.id,
         user_id: req.currentUser.id,
       });
       const userRole =
-        await GardenController.getGardenManageService().getUserRoleOfGarden(currentUser);
-      if (userRole !== 'admin')
+      await GardenController.getGardenManageService().getUserRoleOfGarden(relation);
+      if (userRole.value !== 'owner')
         throw GardenError.BadRequest('This action must be done by the garden owner!');
 
-      const response = GardenController.getGardenService().deleteGarden(req.params.id);
-
+      const response = await GardenController.getGardenService().deleteGarden(req.params.id);
       res.status(StatusCodes.OK).json(response);
     } catch (error) {
       next(error);

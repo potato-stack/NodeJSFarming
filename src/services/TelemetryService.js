@@ -55,7 +55,7 @@ export class TelemetryServices {
 
   deleteDevice = async (id) => {
     try {
-      const affectedCount = await deviceRepository.delete(id);
+      const affectedCount = await deviceRepository.delete({id: id});
 
       if (affectedCount === 0) {
         throw DeviceError.NotFound();

@@ -45,7 +45,7 @@ export class UserGardenSharedController {
       });
       const userRole =
         await UserGardenSharedController.getGardenManageService().getUserRoleOfGarden(currentUser);
-      if (userRole !== 'admin')
+      if (userRole !== 'owner')
         throw GardenError.BadRequest('This action must be done by the garden owner!');
 
       const relation = new AddUserToGardenDto(req.body);
@@ -66,7 +66,7 @@ export class UserGardenSharedController {
       });
       const userRole =
         await UserGardenSharedController.getGardenManageService().getUserRoleOfGarden(currentUser);
-      if (userRole !== 'admin')
+      if (userRole !== 'owner')
         throw GardenError.BadRequest('This action must be done by the garden owner!');
 
       const relation = new RemoveUserFromGardenDto(req.body);
@@ -89,7 +89,7 @@ export class UserGardenSharedController {
       });
       const userRole =
         await UserGardenSharedController.getGardenManageService().getUserRoleOfGarden(currentUser);
-      if (userRole !== 'admin')
+      if (userRole !== 'owner')
         throw GardenError.BadRequest('This action must be done by the garden owner!');
 
       const relation = new UpdateUserRoleDto(req.body);

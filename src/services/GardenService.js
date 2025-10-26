@@ -18,9 +18,8 @@ export class GardenServices {
 	}
   }
 
-  async getGardenByID(getGardenDto) {
+  async getGardenByID(id) {
 	try {
-	  const id = getGardenDto.id;
 	  const garden = await gardenRepository.getByID(id);
 	  if (!garden) {
 		throw GardenError.NotFound(`Garden with ID ${id} not found`);
@@ -44,11 +43,11 @@ export class GardenServices {
 	try {
 	  const garden = new Garden(updateGardenDto);
 	  const targetId = updateGardenDto.targetId;
-	  const [affectedCount] = await gardenRepository.update(garden, {id: targetId});
-	  if (affectedCount === 0) {
-		throw GardenError.NotFound(`Garden with ID ${id} not found`);
+	  const affectedCount = await gardenRepository.update(garden, {id: targetId});
+	  if (!affectedCount) {
+		throw GardenError.NotFound(`Garden with ID ${targetId} not found`);
 	  }
-	  return { status: 'success', message: `Garden with ID ${id} updated successfully` };
+	  return { status: 'success', message: `Garden with ID ${targetId} updated successfully` };
 	} catch (error) {
 	  HandleServerError(error);
 	}
@@ -56,7 +55,7 @@ export class GardenServices {
 
   async deleteGarden(id) {
 	try {
-	  const affectedCount = await gardenRepository.delete(id);
+	  const affectedCount = await gardenRepository.delete({id: id});
 
 	  if (affectedCount === 0) {
 		throw GardenError.NotFound();

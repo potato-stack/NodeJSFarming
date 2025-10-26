@@ -4,19 +4,20 @@ import { UserError } from '../errors/UserError.js';
 import { HandleServerError } from '../errors/ServerError.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { UserInfoDto } from '../dtos/User.dto.js';
+import { UserInfoDto, LoginResponseDto } from '../dtos/User.dto.js';
 
 
 const userRepository = new UserRepository();
 // Private methods
 const createJWT = (payload, expireTime) => {
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: expireTime });
+  return {token: jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: expireTime })};
 };
 
 export class UsersService {
   register = async (userDto) => {
     try {
       const user = new User(userDto);
+      user.password.hashPassword();
       const newUser = await userRepository.create(user);
       return new UserInfoDto(newUser);
     } catch (error) {
@@ -28,10 +29,11 @@ export class UsersService {
   login = async (loginDto) => {
     try {
       const { email, password } = loginDto;
-      const [user] = await userRepository.get({ email });
-      if (!user) {
+      const users = await userRepository.get({ email });
+      if (users.length == 0) {
         throw UserError.NotFound();
       }
+      const [user] = users;
       const isMatch = await user.password.equals(password);
       if (!isMatch) {
         throw UserError.Unauthorized('Wrong password! Please re-enter');
@@ -81,7 +83,7 @@ export class UsersService {
 
   deleteUser = async (id) => {
     try {
-      const affectedCount = await userRepository.delete(id);
+      const affectedCount = await userRepository.delete({id: id});
 
       if (affectedCount === 0) {
         throw UserError.NotFound();

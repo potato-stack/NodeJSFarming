@@ -5,10 +5,10 @@ export class CreateGardenDto {
 }
 
 export class GardenInfoDto extends CreateGardenDto {
-  constructor({ id, name, createAt, updatedAt }) {
+  constructor({ id, name, createdAt, updatedAt }) {
     super({ name });
     this.id = id;
-    this.createAt = createAt;
+    this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
 }

@@ -1,9 +1,11 @@
 import { UserError } from '../../errors/UserError.js';
 import { Roles } from '../value_objets/roles.js';
+import { Entities } from './Entities.js';
 
-export class UserGarden {
+export class UserGarden extends Entities{
   constructor(userGardenProps) {
     try {
+      super();
       // No need construct value here since two id only key
       this.user_id = userGardenProps?.user_id ? userGardenProps.user_id : undefined;
       this.garden_id = userGardenProps?.garden_id ? userGardenProps.garden_id : undefined;
@@ -14,7 +16,7 @@ export class UserGarden {
   }
 
   isAdmin() {
-    return this.role === 'admin';
+    return this.role === 'owner';
   }
 
   isMember() {

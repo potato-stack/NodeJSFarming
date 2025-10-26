@@ -1,12 +1,10 @@
 import Joi from 'joi';
 import { ServerError } from '../../errors/ServerError.js';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 
-const hashPassword = (password) => {
-  return bcrypt.hashSync(password, 12);
-};
+
 export class Password {
-   constructor(value) {
+  constructor(value) {
     const schema = Joi.string()
       .min(8)
       .required()
@@ -14,12 +12,18 @@ export class Password {
 
     const { error } = schema.validate(value);
     if (error) {
-      throw ServerError.DomainError(`Pass Error: ${error.details.map((d) => d.message).join(', ')}`);
+      throw ServerError.DomainError(
+        `Pass Error: ${error.details.map((d) => d.message).join(', ')}`,
+      );
     }
-    this.value = hashPassword(value);
+    this.value = value;
   }
 
   equals = async (input) => {
-    return bcrypt.compare(input, this.hash);
-  } 
+    return await bcrypt.compare(input, this.value);
+  };
+
+  hashPassword = () => {
+  this.value = bcrypt.hashSync(this.value, 12);
+};
 }
