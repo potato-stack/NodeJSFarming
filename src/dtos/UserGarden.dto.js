@@ -35,3 +35,12 @@ export class GetUserOfGardenDto extends GardenUserDto {
     super({ garden_id, user_id });
   }
 }
+
+export class UserGardenInfoDto {
+  constructor({ id, name, email, role}) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+    this.role = role;
+  }
+}

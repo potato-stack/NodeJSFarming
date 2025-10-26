@@ -47,7 +47,7 @@ export class GardenManageService {
       const garden = gardenRepository.getByID(gardenId);
       if (!garden) throw UserError.NotFound('Garden not exist!');
 
-      const usersOfGarden = userGardenRepository.get({ garden_id: gardenId});
+      const usersOfGarden = await userGardenRepository.get({ garden_id: gardenId});
       return usersOfGarden.map((r) => new UserGardenRelationDto(r));
     } catch (error) {
       HandleServerError(error);

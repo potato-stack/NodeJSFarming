@@ -7,6 +7,7 @@ import {
   RemoveUserFromGardenDto,
   UpdateUserRoleDto,
   GetUserOfGardenDto,
+  UserGardenInfoDto,
 } from '../../../dtos/UserGarden.dto.js';
 import { GardenError } from '../../../errors/GardenError.js';
 import { UserError } from '../../../errors/UserError.js';
@@ -106,9 +107,23 @@ export class UserGardenSharedController {
     try {
       const relation = new GetUserOfGardenDto({
         garden_id: req.params.garden_id,
+        user_id: req.params.user_id,
+      });
+      const userRole =
+        await UserGardenSharedController.getGardenManageService().getUserRoleOfGarden(relation);
+
+      res.status(StatusCodes.OK).json(userRole);
+    } catch (error) {
+      next(error);
+    }
+  };
+  
+  getCurrentUserRoleOfGarden = async (req, res, next) => {
+    try {
+      const relation = new GetUserOfGardenDto({
+        garden_id: req.params.id,
         user_id: req.currentUser.id,
       });
-
       const userRole =
         await UserGardenSharedController.getGardenManageService().getUserRoleOfGarden(relation);
 
@@ -120,12 +135,16 @@ export class UserGardenSharedController {
 
   getAllUsersInGarden = async (req, res, next) => {
     try {
-      const users = UserGardenSharedController.getGardenManageService().getUserByGardenId(
-        req.params.garden_id,
+      const users = await UserGardenSharedController.getGardenManageService().getUserByGardenId(
+        req.params.id,
       );
       const usersInfo = [];
       for (const user of users) {
-        usersInfo.push(await UserGardenSharedController.getUserService().getUserByID(user.user_id));
+        const info = {
+          ...(await UserGardenSharedController.getUserService().getUserByID(user.user_id)),
+          role: user.role,
+        };
+        usersInfo.push(info);
       }
       res.status(StatusCodes.OK).json(usersInfo);
     } catch (error) {
