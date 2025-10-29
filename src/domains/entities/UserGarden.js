@@ -23,8 +23,8 @@ export class UserGarden extends Entities{
     return this.role === 'member';
   }
 
-  isUser() {
-    return this.role === 'user';
+  isGuest() {
+    return this.role === 'guest';
   }
 
   setRole(newRole) {

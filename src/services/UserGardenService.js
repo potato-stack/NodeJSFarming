@@ -86,12 +86,12 @@ export class GardenManageService {
   updateUserRoleOfGarden = async (GardenUsersRelationDto) => {
     try {
       const newUpdate = new UserGarden(GardenUsersRelationDto);
-      const [affectedCount] = await userGardenRepository.update(newUpdate, {
+      const sucess = await userGardenRepository.update(newUpdate, {
         user_id: GardenUsersRelationDto.user_id,
         garden_id: GardenUsersRelationDto.garden_id,
       });
-      if (affectedCount === 0) throw UserError.NotFound('User not found or cannot update role!');
-      return { status: 'success', message: `Update user ${user_id} from garden ${garden_id}`};
+      if (!sucess) throw UserError.NotFound('User not found or cannot update role!');
+      return { status: 'success', message: `Update user role sucessfully!`};
     } catch (error) {
       HandleServerError(error);
     }

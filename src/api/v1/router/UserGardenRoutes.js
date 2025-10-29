@@ -3,6 +3,7 @@ import {
   addUserIntoGardenSchema,
   updateUserInGardenSchema,
   getUserInGardenSchema,
+  updateUserRoleOfGardenSchema,
 } from '../schemas/UserGardenSchemas.js';
 import { validate } from '../../../middlewares/ValidateMiddleware.js';
 import express from 'express';
@@ -28,6 +29,7 @@ userGardenRouter.post(
 userGardenRouter.put(
   '/:garden_id/users/:user_id',
   validate(updateUserInGardenSchema, 'params'),
+  validate(updateUserRoleOfGardenSchema, 'body'),
   userGardenController.updateUserRoleOfGarden,
 );
 userGardenRouter.delete(

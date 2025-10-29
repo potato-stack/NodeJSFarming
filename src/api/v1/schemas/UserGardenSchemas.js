@@ -2,7 +2,6 @@ import Joi from 'joi';
 
 export const addUserIntoGardenSchema = Joi.object({
   user_id: Joi.string().uuid({ version: 'uuidv4' }).required(),
-  garden_id: Joi.string().uuid({ version: 'uuidv4' }).required(),
   role: Joi.string().required(),
 });
 
@@ -13,6 +12,10 @@ export const getUserRoleOfGardenSchema = Joi.object({
 export const updateUserOfGardenSchema = Joi.object({
   user_id: Joi.string().uuid({ version: 'uuidv4' }).required(),
   garden_id: Joi.string().uuid({ version: 'uuidv4' }).required(),
+  role: Joi.string().required(),
+});
+
+export const updateUserRoleOfGardenSchema = Joi.object({
   role: Joi.string().required(),
 });
 

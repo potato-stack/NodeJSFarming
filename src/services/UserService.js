@@ -1,8 +1,7 @@
 import { User } from '../domains/entities/User.js';
-import { UserRepository } from '../infrastructure/repository/UserRepository.js';
+import { UserRepository } from '../infrastructure/repository/userRepository.js';
 import { UserError } from '../errors/UserError.js';
 import { HandleServerError } from '../errors/ServerError.js';
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UserInfoDto, LoginResponseDto } from '../dtos/User.dto.js';
 
@@ -39,7 +38,7 @@ export class UsersService {
         throw UserError.Unauthorized('Wrong password! Please re-enter');
       }
       // Use private method
-      const token = createJWT({ id: user.id, email: user.email }, '30m');
+      const token = createJWT({ id: user.id, email: user.email }, '24h');
       return new LoginResponseDto(token);
     } catch (error) {
       HandleServerError(error);
