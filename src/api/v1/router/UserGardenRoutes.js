@@ -13,15 +13,15 @@ const userGardenRouter = express.Router();
 const userGardenController = new UserGardenSharedController();
 
 userGardenRouter
-  .get('/:id/users', validate(getGardenSchema, 'params'), userGardenController.getAllUsersInGarden)
-  .get('/:id/role', validate(getGardenSchema, 'params'), userGardenController.getCurrentUserRoleOfGarden)
+  .get('/:garden_id/users', validate(getGardenSchema, 'params'), userGardenController.getAllUsersInGarden)
+  .get('/:garden_id/role', validate(getGardenSchema, 'params'), userGardenController.getCurrentUserRoleOfGarden)
   .get(
     '/:garden_id/users/:user_id/role',
     validate(getUserInGardenSchema, 'params'),
     userGardenController.getUserRoleOfGarden,
   );
 userGardenRouter.post(
-  '/:id/users',
+  '/:garden_id/users',
   validate(getGardenSchema, 'params'),
   validate(addUserIntoGardenSchema, 'body'),
   userGardenController.addUserToGarden,

@@ -5,11 +5,10 @@ import { HandleServerError } from '../errors/ServerError.js';
 import jwt from 'jsonwebtoken';
 import { UserInfoDto, LoginResponseDto } from '../dtos/User.dto.js';
 
-
 const userRepository = new UserRepository();
 // Private methods
 const createJWT = (payload, expireTime) => {
-  return {token: jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: expireTime })};
+  return { token: jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: expireTime }) };
 };
 
 export class UsersService {
@@ -70,7 +69,7 @@ export class UsersService {
     try {
       const targetUpdate = new User(userDto);
       const targetId = userDto.targetId;
-      const [affectedCount] = await userRepository.update(targetUpdate, {id: targetId});
+      const [affectedCount] = await userRepository.update(targetUpdate, { id: targetId });
       if (affectedCount === 0) {
         throw UserError.NotFound(`User with ID ${targetUpdate.id} not found`);
       }
@@ -82,7 +81,7 @@ export class UsersService {
 
   deleteUser = async (id) => {
     try {
-      const affectedCount = await userRepository.delete({id: id});
+      const affectedCount = await userRepository.delete({ id: id });
 
       if (affectedCount === 0) {
         throw UserError.NotFound();
@@ -92,4 +91,12 @@ export class UsersService {
       HandleServerError(error);
     }
   };
+
+  static instance = null;
+  static getInstance() {
+    if (!UsersService.instance) {
+      UsersService.instance = new UsersService();
+    }
+    return UsersService.instance;
+  }
 }

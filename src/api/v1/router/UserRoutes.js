@@ -5,22 +5,23 @@ import {
   getUserByIdSchema,
   validateTokenSchema,
 } from '../schemas/UserSchemas.js';
-import { validateCookie, validate } from '../../../middlewares/ValidateMiddleware.js';
-import { authMiddleWare } from '../../../middlewares/AuthMiddleware.js';
+import { validate } from '../../../middlewares/ValidateMiddleware.js';
 import express from 'express';
 
 const userRouter = express.Router();
+const authRouter = express.Router();
 const controller = new UsersController();
 
-userRouter
-  .post('/auth/register', validate(registerUserSchema, 'body'), controller.register)
-  .post('/auth/login', validate(loginUserSchema, 'body'), controller.loginUser);
+authRouter
+  .post('/register', validate(registerUserSchema, 'body'), controller.register)
+  .post('/login', validate(loginUserSchema, 'body'), controller.loginUser);
+
 userRouter.get(
   '/me',
-  validateCookie(validateTokenSchema),
-  authMiddleWare,
   validate(getUserByIdSchema),
   controller.getCurrentUserByID,
 );
 
-export { userRouter };
+// Need user password update and info update -> do later
+
+export { userRouter, authRouter };

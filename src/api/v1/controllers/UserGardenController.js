@@ -1,6 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
 import { GardenManageService } from '../../../services/UserGardenService.js';
-import { GardenServices } from '../../../services/GardenService.js';
 import { UsersService } from '../../../services/UserService.js';
 import {
   AddUserToGardenDto,
@@ -13,48 +12,24 @@ import { GardenError } from '../../../errors/GardenError.js';
 import { UserError } from '../../../errors/UserError.js';
 
 export class UserGardenSharedController {
-  static gardenServices = null;
-  static gardenManageService = null;
-  static usersService = null;
-
-  static getGardenService() {
-    if (!UserGardenSharedController.gardenServices) {
-      UserGardenSharedController.gardenServices = new GardenServices();
-    }
-    return UserGardenSharedController.gardenServices;
-  }
-
-  static getGardenManageService() {
-    if (!UserGardenSharedController.gardenServices) {
-      UserGardenSharedController.gardenManageService = new GardenManageService();
-    }
-    return UserGardenSharedController.gardenManageService;
-  }
-
-  static getUserService() {
-    if (!UserGardenSharedController.usersService) {
-      UserGardenSharedController.usersService = new UsersService();
-    }
-    return UserGardenSharedController.usersService;
-  }
-
   addUserToGarden = async (req, res, next) => {
     try {
-      const currentUser = new GetUserOfGardenDto({
-        garden_id: req.params.id,
+      const dto = new GetUserOfGardenDto({
+        garden_id: req.params.garden_id,
         user_id: req.currentUser.id,
       });
       const userRole =
-        await UserGardenSharedController.getGardenManageService().getUserRoleOfGarden(currentUser);
+        await GardenManageService.getInstance().getUserRoleOfGarden(dto);
       if (userRole.value !== 'owner')
         throw GardenError.BadRequest('This action must be done by the garden owner!');
 
       const relation = new AddUserToGardenDto({
         user_id: req.body.user_id,
-        garden_id: req.params.id,
+        garden_id: req.params.garden_id,
+        role: req.body.role,
       });
       const createdUserGarden =
-        await UserGardenSharedController.getGardenManageService().addUserToGarden(relation);
+        await GardenManageService.getInstance().addUserToGarden(relation);
 
       res.status(StatusCodes.CREATED).json(createdUserGarden);
     } catch (error) {
@@ -64,22 +39,23 @@ export class UserGardenSharedController {
 
   removeUserFromGarden = async (req, res, next) => {
     try {
-      const currentUser = new GetUserOfGardenDto({
+      const dto = new GetUserOfGardenDto({
         garden_id: req.params.garden_id,
         user_id: req.currentUser.id,
       });
       const userRole =
-        await UserGardenSharedController.getGardenManageService().getUserRoleOfGarden(currentUser);
+        await GardenManageService.getInstance().getUserRoleOfGarden(dto);
       if (userRole.value !== 'owner')
         throw GardenError.BadRequest('This action must be done by the garden owner!');
-      
+
       const relation = new RemoveUserFromGardenDto({
         garden_id: req.params.garden_id,
         user_id: req.params.user_id,
       });
-      if(currentUser.user_id == relation.user_id) throw GardenError.BadRequest('You cannot remove yourself from your garden.')
+      if (dto.user_id == relation.user_id)
+        throw GardenError.BadRequest('You cannot remove yourself from your garden.');
       const removedUserGarden =
-        await UserGardenSharedController.getGardenManageService().removeUserFromGarden(relation);
+        await GardenManageService.getInstance().removeUserFromGarden(relation);
 
       res.status(StatusCodes.OK).json(removedUserGarden);
     } catch (error) {
@@ -91,12 +67,12 @@ export class UserGardenSharedController {
     try {
       if (req.currentUser.id === req.user_id)
         throw UserError.BadRequest('You cannot change your admin role');
-      const currentUser = new GetUserOfGardenDto({
+      const dto = new GetUserOfGardenDto({
         garden_id: req.params.garden_id,
         user_id: req.currentUser.id,
       });
       const userRole =
-        await UserGardenSharedController.getGardenManageService().getUserRoleOfGarden(currentUser);
+        await GardenManageService.getInstance().getUserRoleOfGarden(dto);
       if (userRole.value !== 'owner')
         throw GardenError.BadRequest('This action must be done by the garden owner!');
 
@@ -106,7 +82,7 @@ export class UserGardenSharedController {
         role: req.body.role,
       });
       const updatedUserGarden =
-        await UserGardenSharedController.getGardenManageService().updateUserRoleOfGarden(relation);
+        await GardenManageService.getInstance().updateUserRoleOfGarden(relation);
 
       res.status(StatusCodes.OK).json(updatedUserGarden);
     } catch (error) {
@@ -121,7 +97,7 @@ export class UserGardenSharedController {
         user_id: req.params.user_id,
       });
       const userRole =
-        await UserGardenSharedController.getGardenManageService().getUserRoleOfGarden(relation);
+        await GardenManageService.getInstance().getUserRoleOfGarden(relation);
 
       res.status(StatusCodes.OK).json(userRole);
     } catch (error) {
@@ -132,11 +108,11 @@ export class UserGardenSharedController {
   getCurrentUserRoleOfGarden = async (req, res, next) => {
     try {
       const relation = new GetUserOfGardenDto({
-        garden_id: req.params.id,
+        garden_id: req.params.garden_id,
         user_id: req.currentUser.id,
       });
       const userRole =
-        await UserGardenSharedController.getGardenManageService().getUserRoleOfGarden(relation);
+        await GardenManageService.getInstance().getUserRoleOfGarden(relation);
 
       res.status(StatusCodes.OK).json(userRole);
     } catch (error) {
@@ -146,13 +122,13 @@ export class UserGardenSharedController {
 
   getAllUsersInGarden = async (req, res, next) => {
     try {
-      const users = await UserGardenSharedController.getGardenManageService().getUserByGardenId(
-        req.params.id,
+      const users = await GardenManageService.getInstance().getUserByGardenId(
+        req.params.garden_id,
       );
       const usersInfo = [];
       for (const user of users) {
         const info = {
-          ...(await UserGardenSharedController.getUserService().getUserByID(user.user_id)),
+          ...(await UsersService.getInstance().getUserByID(user.user_id)),
           role: user.role,
         };
         usersInfo.push(info);

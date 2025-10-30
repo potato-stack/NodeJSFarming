@@ -6,36 +6,19 @@ import { AddUserToGardenDto, GetUserOfGardenDto } from '../../../dtos/UserGarden
 import { GardenError } from '../../../errors/GardenError.js';
 
 export class GardenController {
-  static gardenServices = null;
-  static gardenManageService = null;
-
-  static getGardenService() {
-    if (!GardenController.gardenServices) {
-      GardenController.gardenServices = new GardenServices();
-    }
-    return GardenController.gardenServices;
-  }
-
-  static getGardenManageService() {
-    if (!GardenController.gardenManageService) {
-      GardenController.gardenManageService = new GardenManageService();
-    }
-    return GardenController.gardenManageService;
-  }
-
   createGarden = async (req, res, next) => {
     try {
       // Mappers
       const garden = new CreateGardenDto(req.body);
       const currentUserId = req.currentUser.id;
-      const createdGarden = await GardenController.getGardenService().createGarden(garden);
+      const createdGarden = await GardenServices.getInstance().createGarden(garden);
       const relation = new AddUserToGardenDto({
         garden_id: createdGarden.id,
         user_id: currentUserId,
         role: 'owner',
       });
       const createdUserGarden =
-        await GardenController.getGardenManageService().addUserToGarden(relation);
+        await GardenManageService.getInstance().addUserToGarden(relation);
 
       res.status(StatusCodes.CREATED).json(createdUserGarden);
     } catch (error) {
@@ -48,13 +31,13 @@ export class GardenController {
     try {
       // Mappers
       const relation = new GetUserOfGardenDto({
-        garden_id: req.params.id,
+        garden_id: req.params.garden_id,
         user_id: req.currentUser.id,
       });
-      const role = await GardenController.getGardenManageService().getUserRoleOfGarden(relation);
+      const role = await GardenManageService.getInstance().getUserRoleOfGarden(relation);
       if (!role) throw GardenError.BadRequest('Not a member');
-      const gardenInfo = await GardenController.getGardenService().getGardenByID(req.params.id);
-      res.status(StatusCodes.CREATED).json(gardenInfo);
+      const gardenInfo = await GardenServices.getInstance().getGardenByID(req.params.garden_id);
+      res.status(StatusCodes.CREATED).json({...gardenInfo, role});
     } catch (error) {
       // Bubble up the error
       next(error);
@@ -63,7 +46,7 @@ export class GardenController {
 
   getAllGardens = async (req, res, next) => {
     try {
-      const gardens = await GardenController.getGardenService().getAllGardens();
+      const gardens = await GardenServices.getInstance().getAllGardens();
       res.status(StatusCodes.OK).json(gardens);
     } catch (error) {
       next(error);
@@ -72,14 +55,12 @@ export class GardenController {
 
   getGardensOfCurrentUser = async (req, res, next) => {
     try {
-      const gardens = await GardenController.getGardenManageService().getGardenByUserId(
+      const gardens = await GardenManageService.getInstance().getGardenByUserId(
         req.currentUser.id,
       );
       const gardensInfo = [];
       for (const garden of gardens) {
-        gardensInfo.push(
-          await GardenController.getGardenService().getGardenByID(garden.garden_id),
-        );
+        gardensInfo.push(await GardenServices.getInstance().getGardenByID(garden.garden_id));
       }
       res.status(StatusCodes.OK).json(gardensInfo);
     } catch (error) {
@@ -89,17 +70,16 @@ export class GardenController {
 
   updateGarden = async (req, res, next) => {
     try {
-      const relation = new GetUserOfGardenDto({
-        garden_id: req.params.id,
+      const dto = new GetUserOfGardenDto({
+        garden_id: req.params.garden_id,
         user_id: req.currentUser.id,
       });
-      const userRole =
-        await GardenController.getGardenManageService().getUserRoleOfGarden(relation);
+      const userRole = await GardenManageService.getInstance().getUserRoleOfGarden(dto);
       if (userRole.value !== 'owner')
         throw GardenError.BadRequest('This action must be done by the garden owner!');
 
-      const newGarden = new updateGardenDto({name: req.body.name, targetId: req.params.id});
-      const response = await GardenController.getGardenService().updateGarden(newGarden);
+      const newGarden = new updateGardenDto({ name: req.body.name, targetId: req.params.garden_id });
+      const response = await GardenServices.getInstance().updateGarden(newGarden);
       res.status(StatusCodes.OK).json(response);
     } catch (error) {
       next(error);
@@ -108,16 +88,15 @@ export class GardenController {
 
   deleteGarden = async (req, res, next) => {
     try {
-      const relation = new GetUserOfGardenDto({
-        garden_id: req.params.id,
+      const dto = new GetUserOfGardenDto({
+        garden_id: req.params.garden_id,
         user_id: req.currentUser.id,
       });
-      const userRole =
-      await GardenController.getGardenManageService().getUserRoleOfGarden(relation);
+      const userRole = await GardenManageService.getInstance().getUserRoleOfGarden(dto);
       if (userRole.value !== 'owner')
         throw GardenError.BadRequest('This action must be done by the garden owner!');
 
-      const response = await GardenController.getGardenService().deleteGarden(req.params.id);
+      const response = await GardenServices.getInstance().deleteGarden(req.params.garden_id);
       res.status(StatusCodes.OK).json(response);
     } catch (error) {
       next(error);

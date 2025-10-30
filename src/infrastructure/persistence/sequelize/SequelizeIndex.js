@@ -7,4 +7,7 @@ import { UserGardens } from "./UserGarden.js";
 Users.belongsToMany(Gardens, { through: UserGardens, foreignKey: "user_id" });
 Gardens.belongsToMany(Users, { through: UserGardens, foreignKey: "garden_id" });
 
+Gardens.hasMany(TelemetryDevices, {foreignKey: "garden_id"});
+TelemetryDevices.belongsTo(Gardens, {foreignKey: "garden_id"});
+
 export { TelemetryDevices, Gardens, Users, UserGardens };

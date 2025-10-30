@@ -6,7 +6,7 @@ export class Garden extends Entities{
   constructor(gardenProps) {
     try {
       super();
-      this.id = gardenProps?.id ? gardenProps.id : undefined;
+      this.id = gardenProps?.garden_id ? gardenProps.garden_id : undefined;
       this.name = gardenProps?.name ? new Name(gardenProps.name): undefined;
       this.createdAt = gardenProps?.createdAt ? gardenProps.createdAt : undefined;
       this.updatedAt = gardenProps?.updatedAt ? gardenProps.updatedAt : undefined;

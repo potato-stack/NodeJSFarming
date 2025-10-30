@@ -42,12 +42,12 @@ export class TelemetryServices {
   updateDevice = async (UpdateDeviceDto) => {
     try {
       const device = new Device(UpdateDeviceDto);
-      const targetId = updateDeviceDto.targetId;
-      const [affectedCount] = await deviceRepository.update(device, {id: targetId});
+      const targetId = UpdateDeviceDto.targetId;
+      const affectedCount = await deviceRepository.update(device, {id: targetId});
       if (affectedCount === 0) {
-        throw DeviceError.NotFound(`Device with ID ${id} not found`);
+        throw DeviceError.NotFound(`Device with ID ${targetId} not found`);
       }
-      return { status: 'success', message: `Device with ID ${id} updated successfully` };
+      return { status: 'success', message: `Device with ID ${targetId} updated successfully` };
     } catch (error) {
       HandleServerError(error);
     }

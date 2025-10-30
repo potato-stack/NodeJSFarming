@@ -12,7 +12,7 @@ export const loginUserSchema = Joi.object({
 });
 
 export const getUserByIdSchema = Joi.object({
-  id: Joi.string().uuid({ version: "uuidv4" }).required()
+  user_id: Joi.string().uuid({ version: "uuidv4" }).required()
 });
 
 export const validateTokenSchema = Joi.object({

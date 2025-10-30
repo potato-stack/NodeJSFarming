@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 const PORT = process.env.PORT;
 
-import express, { application } from 'express';
+import express from 'express';
 
 // Packages
 import morgan from 'morgan'; // Loggin
@@ -12,12 +12,12 @@ import cors from 'cors'; // Cross origin request
 import rateLimiter from 'express-rate-limit'; // Prevent bruteforce
 
 import { deviceRouter } from './api/v1/router/DeviceRoutes.js';
-import { userRouter } from './api/v1/router/UserRoutes.js';
+import { userRouter, authRouter } from './api/v1/router/UserRoutes.js';
 import { gardenRouter } from './api/v1/router/GardenRoutes.js';
 import { userGardenRouter } from './api/v1/router/UserGardenRoutes.js';
 import { validateCookie } from './middlewares/ValidateMiddleware.js';
 import { validateTokenSchema } from './api/v1/schemas/UserSchemas.js';
-import { authMiddleWare } from './middlewares/AuthMiddleware.js';
+import { authMiddleWare, requireGardenOwner } from './middlewares/AuthMiddleware.js';
 import { errorHandlerMiddleware } from './middlewares/ErrorMiddleware.js';
 
 // Express
@@ -40,10 +40,14 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Auth do not require auth-middle
+app.use('/auth', authRouter);
+// Authentication middle ware
+app.use(validateCookie(validateTokenSchema), authMiddleWare);
 // Router
-app.use('/devices', validateCookie(validateTokenSchema), authMiddleWare, deviceRouter);
-app.use('/gardens', validateCookie(validateTokenSchema), authMiddleWare, gardenRouter);
-app.use('/gardens',validateCookie(validateTokenSchema), authMiddleWare,  userGardenRouter);
+app.use('/gardens/:garden_id/devices', requireGardenOwner, deviceRouter);
+app.use('/gardens', gardenRouter);
+app.use('/gardens', userGardenRouter);
 app.use('/', userRouter);
 
 // Error handler

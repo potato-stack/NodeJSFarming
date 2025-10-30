@@ -9,6 +9,9 @@ export class Device extends Entities{
   constructor(deviceProps) {
     try {
       super();
+      this.id = deviceProps?.device_id ? deviceProps.device_id : undefined;
+      this.garden_id = deviceProps?.garden_id ? deviceProps.garden_id : undefined;
+      if (this.garden_id === undefined) throw DeviceError.BadRequest('Device must belong to a garden !')
       this.type = deviceProps?.type ? new DeviceType(deviceProps.type) : undefined;
       this.name = deviceProps?.name ? new Name(deviceProps.name) : undefined;
       this.location = deviceProps?.location

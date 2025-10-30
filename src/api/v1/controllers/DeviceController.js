@@ -15,7 +15,7 @@ export class TelemetryController {
   createDevice = async (req, res, next) => {
     try {
       // Mappers
-      const device = new CreateDeviceDto(req.body);
+      const device = new CreateDeviceDto({...req.body, ...req.params});
       const createdDevice = await TelemetryController.getService().createDevice(device);
 
       res.status(StatusCodes.CREATED).json(createdDevice);
@@ -27,7 +27,7 @@ export class TelemetryController {
 
   getDeviceByID = async (req, res, next) => {
     try {
-      const id = req.params.id;
+      const id = req.params.device_id;
       const device = await TelemetryController.getService().getDeviceByID(id);
       res.status(StatusCodes.OK).json(device);
     } catch (error) {
@@ -46,7 +46,7 @@ export class TelemetryController {
 
   updateDevice = async (req, res, next) => {
     try {
-      const updateTarget = new updateDeviceDto(req.body);
+      const updateTarget = new updateDeviceDto({...req.body, ...req.params});
       const response = await TelemetryController.getService().updateDevice(updateTarget);
       res.status(StatusCodes.OK).json(response);
     } catch (error) {
@@ -56,7 +56,7 @@ export class TelemetryController {
 
   deleteDevice = async (req, res, next) => {
     try {
-      const id = req.params.id;
+      const id = req.params.device_id;
       const device = await TelemetryController.getService().deleteDevice(id);
       res.status(StatusCodes.OK).json(device);
     } catch (error) {

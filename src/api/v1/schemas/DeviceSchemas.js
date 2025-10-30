@@ -1,7 +1,7 @@
 import Joi from 'joi';
 
 export const getDeviceSchema = Joi.object({
-  id: Joi.string().uuid({ version: "uuidv4" }).required(),
+  device_id: Joi.string().uuid({ version: "uuidv4" }).required(),
 });
 
 export const createDeviceSchema = Joi.object({

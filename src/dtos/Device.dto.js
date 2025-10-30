@@ -1,5 +1,6 @@
 export class CreateDeviceDto {
-  constructor({ type, name, location, status }) {
+  constructor({ type, name, location, status, garden_id }) {
+    this.garden_id = garden_id;
     this.type = type;
     this.name = name || '';
     this.location = location || 'unknown';
@@ -21,8 +22,8 @@ export class DeviceInfoDto extends CreateDeviceDto {
   }
 }
 export class updateDeviceDto extends CreateDeviceDto {
-  constructor({ targetId, type, name, location, status }) {
-    super({ type, name, location, status });
-    this.targetId = targetId;
+  constructor({ device_id, garden_id, type, name, location, status }) {
+    super({ type, name, location, status, garden_id });
+    this.targetId = device_id;
   }
 }

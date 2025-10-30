@@ -1,21 +1,26 @@
 import { TelemetryController } from '../controllers/DeviceController.js';
 import { getDeviceSchema, createDeviceSchema } from '../schemas/DeviceSchemas.js';
+import { getGardenSchema } from '../schemas/GardenSchemas.js';
 import { validate } from '../../../middlewares/ValidateMiddleware.js';
 import express from 'express';
 
-const deviceRouter = express.Router();
+const deviceRouter = express.Router({ mergeParams: true });
 const controller = new TelemetryController();
 
 deviceRouter
   .get('/', controller.getAllDevice)
-  .get('/:id', validate(getDeviceSchema, 'params'), controller.getDeviceByID);
-deviceRouter.post('/', validate(createDeviceSchema, 'body'), controller.createDevice);
+  .get('/:device_id', validate(getDeviceSchema, 'params'), controller.getDeviceByID);
+deviceRouter.post(
+  '/',
+  validate(createDeviceSchema, 'body'),
+  validate(getGardenSchema, 'params'),
+  controller.createDevice,
+);
 deviceRouter.put(
-  '/:id',
-  validate(getDeviceSchema, 'params'),
+  '/:device_id',
   validate(createDeviceSchema, 'body'),
   controller.updateDevice,
 );
-deviceRouter.delete('/:id', validate(getDeviceSchema, 'params'), controller.deleteDevice);
+deviceRouter.delete('/:device_id', controller.deleteDevice);
 
 export { deviceRouter };

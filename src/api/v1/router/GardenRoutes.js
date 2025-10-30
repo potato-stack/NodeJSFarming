@@ -6,9 +6,9 @@ import express from 'express';
 const gardenRouter = express.Router();
 const controller = new GardenController();
 
-gardenRouter.get('/:id', validate(getGardenSchema, 'body'), controller.getGardenById).get('/', controller.getGardensOfCurrentUser);
+gardenRouter.get('/:garden_id', validate(getGardenSchema, 'body'), controller.getGardenById).get('/', controller.getGardensOfCurrentUser);
 gardenRouter.post('/', validate(createGardenSchema, 'body'), controller.createGarden);
-gardenRouter.put('/:id', validate(getGardenSchema, 'params'), controller.updateGarden);
-gardenRouter.delete('/:id', validate(getGardenSchema, 'params'), controller.deleteGarden);
+gardenRouter.put('/:garden_id', validate(getGardenSchema, 'params'), controller.updateGarden);
+gardenRouter.delete('/:garden_id', validate(getGardenSchema, 'params'), controller.deleteGarden);
 
 export { gardenRouter };

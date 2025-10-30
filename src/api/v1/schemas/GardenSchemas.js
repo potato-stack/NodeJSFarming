@@ -5,5 +5,5 @@ export const createGardenSchema = Joi.object({
 });
 
 export const getGardenSchema = Joi.object({
-  id: Joi.string().uuid({ version: "uuidv4" }).required(),
+  garden_id: Joi.string().uuid({ version: "uuidv4" }).required(),
 });
