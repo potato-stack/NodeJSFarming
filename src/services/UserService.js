@@ -28,7 +28,7 @@ export class UsersService {
     try {
       const { email, password } = loginDto;
       const users = await userRepository.get({ email });
-      if (users.length == 0) {
+      if (!users || users.length == 0) {
         throw UserError.NotFound();
       }
       const [user] = users;

@@ -26,9 +26,9 @@ const app = express();
 // Middleware
 app.use(
   rateLimiter({
-    windowsMs: 15 * 60 * 1000,
-    max: 60,
-  }),
+    windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
+    max: Number(process.env.RATE_LIMIT_MAX) || 60,
+  })
 );
 
 app.use(helmet());

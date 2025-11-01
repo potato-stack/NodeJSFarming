@@ -44,7 +44,7 @@ export class GardenManageService {
 
   getUserByGardenId = async (gardenId) => {
     try {
-      const garden = gardenRepository.getByID(gardenId);
+      const garden = await gardenRepository.getByID(gardenId);
       if (!garden) throw UserError.NotFound('Garden not exist!');
 
       const usersOfGarden = await userGardenRepository.get({ garden_id: gardenId });

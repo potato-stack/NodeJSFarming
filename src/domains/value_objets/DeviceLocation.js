@@ -6,6 +6,7 @@ export class DeviceLocation {
     const schema = Joi.string().optional().empty('').default('Unknow');
 
     const { error } = schema.validate(value);
+    // Optional, call 3rd party to validate the location
     if (error) {
       throw ServerError.DomainError(`Errors: ${error.details.map((d) => d.message).join(', ')}`);
     }
