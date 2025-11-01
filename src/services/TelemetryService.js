@@ -2,7 +2,7 @@ import { DeviceRepository } from '../infrastructure/repository/DeviceRepository.
 import { DeviceError } from '../errors/DeviceError.js';
 import { HandleServerError } from '../errors/ServerError.js';
 import { Device } from '../domains/entities/Device.js';
-import { DeviceInfoDto, updateDeviceDto } from '../dtos/Device.dto.js';
+import { DeviceInfoDto } from '../dtos/Device.dto.js';
 
 const deviceRepository = new DeviceRepository();
 
@@ -17,9 +17,8 @@ export class TelemetryServices {
     }
   };
 
-  getDeviceByID = async (GetDeviceDto) => {
+  getDeviceByID = async (id) => {
     try {
-      const id = GetDeviceDto.id;
       const device = await deviceRepository.getByID(id);
       if (!device) {
         throw DeviceError.NotFound(`Device with ID ${id} not found`);
@@ -42,12 +41,12 @@ export class TelemetryServices {
   updateDevice = async (UpdateDeviceDto) => {
     try {
       const device = new Device(UpdateDeviceDto);
-      const targetId = UpdateDeviceDto.targetId;
-      const affectedCount = await deviceRepository.update(device, {id: targetId});
+      const id = UpdateDeviceDto.id;
+      const affectedCount = await deviceRepository.update(device, { id: id });
       if (affectedCount === 0) {
-        throw DeviceError.NotFound(`Device with ID ${targetId} not found`);
+        throw DeviceError.NotFound(`Device with ID ${id} not found`);
       }
-      return { status: 'success', message: `Device with ID ${targetId} updated successfully` };
+      return { status: 'success', message: `Device with ID ${id} updated successfully` };
     } catch (error) {
       HandleServerError(error);
     }
@@ -55,7 +54,7 @@ export class TelemetryServices {
 
   deleteDevice = async (id) => {
     try {
-      const affectedCount = await deviceRepository.delete({id: id});
+      const affectedCount = await deviceRepository.delete({ id: id });
 
       if (affectedCount === 0) {
         throw DeviceError.NotFound();
@@ -65,4 +64,13 @@ export class TelemetryServices {
       HandleServerError(error);
     }
   };
+
+  static instance = null;
+
+  static getInstance() {
+    if (!TelemetryServices.instance) {
+      TelemetryServices.instance = new TelemetryServices();
+    }
+    return TelemetryServices.instance;
+  }
 }

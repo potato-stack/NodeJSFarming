@@ -70,15 +70,7 @@ export class GardenController {
 
   updateGarden = async (req, res, next) => {
     try {
-      const dto = new GetUserOfGardenDto({
-        garden_id: req.params.garden_id,
-        user_id: req.currentUser.id,
-      });
-      const userRole = await GardenManageService.getInstance().getUserRoleOfGarden(dto);
-      if (userRole.value !== 'owner')
-        throw GardenError.BadRequest('This action must be done by the garden owner!');
-
-      const newGarden = new updateGardenDto({ name: req.body.name, targetId: req.params.garden_id });
+      const newGarden = new updateGardenDto({ name: req.body.name, id: req.params.garden_id });
       const response = await GardenServices.getInstance().updateGarden(newGarden);
       res.status(StatusCodes.OK).json(response);
     } catch (error) {
@@ -88,14 +80,6 @@ export class GardenController {
 
   deleteGarden = async (req, res, next) => {
     try {
-      const dto = new GetUserOfGardenDto({
-        garden_id: req.params.garden_id,
-        user_id: req.currentUser.id,
-      });
-      const userRole = await GardenManageService.getInstance().getUserRoleOfGarden(dto);
-      if (userRole.value !== 'owner')
-        throw GardenError.BadRequest('This action must be done by the garden owner!');
-
       const response = await GardenServices.getInstance().deleteGarden(req.params.garden_id);
       res.status(StatusCodes.OK).json(response);
     } catch (error) {

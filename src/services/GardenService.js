@@ -42,12 +42,12 @@ export class GardenServices {
   async updateGarden(updateGardenDto) {
     try {
       const garden = new Garden(updateGardenDto);
-      const targetId = updateGardenDto.targetId;
-      const affectedCount = await gardenRepository.update(garden, { id: targetId });
+      const id = updateGardenDto.id;
+      const affectedCount = await gardenRepository.update(garden, { id: id });
       if (!affectedCount) {
-        throw GardenError.NotFound(`Garden with ID ${targetId} not found`);
+        throw GardenError.NotFound(`Garden with ID ${id} not found`);
       }
-      return { status: 'success', message: `Garden with ID ${targetId} updated successfully` };
+      return { status: 'success', message: `Garden with ID ${id} updated successfully` };
     } catch (error) {
       HandleServerError(error);
     }

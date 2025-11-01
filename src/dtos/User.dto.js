@@ -28,9 +28,9 @@ export class UserInfoDto {
 }
 
 export class UpdateUserDto extends RegisterDto {
-  constructor({ targetId, name, email, password }) {
+  constructor({ id, name, email, password }) {
     super({ name, email, password });
-    this.targetId = targetId;
+    this.id = id;
   }
 }
 

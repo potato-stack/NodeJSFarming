@@ -24,6 +24,6 @@ export class DeviceInfoDto extends CreateDeviceDto {
 export class updateDeviceDto extends CreateDeviceDto {
   constructor({ device_id, garden_id, type, name, location, status }) {
     super({ type, name, location, status, garden_id });
-    this.targetId = device_id;
+    this.id = device_id;
   }
 }

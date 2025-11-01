@@ -3,20 +3,11 @@ import { TelemetryServices } from '../../../services/TelemetryService.js';
 import { CreateDeviceDto, updateDeviceDto } from '../../../dtos/Device.dto.js';
 
 export class TelemetryController {
-  static telemetryServices = null;
-
-  static getService() {
-    if (!TelemetryController.telemetryServices) {
-      TelemetryController.telemetryServices = new TelemetryServices();
-    }
-    return TelemetryController.telemetryServices;
-  }
-
   createDevice = async (req, res, next) => {
     try {
       // Mappers
       const device = new CreateDeviceDto({...req.body, ...req.params});
-      const createdDevice = await TelemetryController.getService().createDevice(device);
+      const createdDevice = await TelemetryServices.getInstance().createDevice(device);
 
       res.status(StatusCodes.CREATED).json(createdDevice);
     } catch (error) {
@@ -28,7 +19,7 @@ export class TelemetryController {
   getDeviceByID = async (req, res, next) => {
     try {
       const id = req.params.device_id;
-      const device = await TelemetryController.getService().getDeviceByID(id);
+      const device = await TelemetryServices.getInstance().getDeviceByID(id);
       res.status(StatusCodes.OK).json(device);
     } catch (error) {
       next(error);
@@ -37,7 +28,7 @@ export class TelemetryController {
 
   getAllDevice = async (req, res, next) => {
     try {
-      const devices = await TelemetryController.getService().getAllDevices();
+      const devices = await TelemetryServices.getInstance().getAllDevices();
       res.status(StatusCodes.OK).json(devices);
     } catch (error) {
       next(error);
@@ -47,7 +38,7 @@ export class TelemetryController {
   updateDevice = async (req, res, next) => {
     try {
       const updateTarget = new updateDeviceDto({...req.body, ...req.params});
-      const response = await TelemetryController.getService().updateDevice(updateTarget);
+      const response = await TelemetryServices.getInstance().updateDevice(updateTarget);
       res.status(StatusCodes.OK).json(response);
     } catch (error) {
       next(error);
@@ -57,7 +48,7 @@ export class TelemetryController {
   deleteDevice = async (req, res, next) => {
     try {
       const id = req.params.device_id;
-      const device = await TelemetryController.getService().deleteDevice(id);
+      const device = await TelemetryServices.getInstance().deleteDevice(id);
       res.status(StatusCodes.OK).json(device);
     } catch (error) {
       next(error);

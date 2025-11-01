@@ -13,9 +13,9 @@ export class GardenInfoDto extends CreateGardenDto {
   }
 }
 export class updateGardenDto extends CreateGardenDto {
-  constructor({ targetId, name }) {
+  constructor({ id, name }) {
     super({ name });
-    this.targetId = targetId;
+    this.id = id;
   }
 }
 

@@ -19,8 +19,9 @@ deviceRouter.post(
 deviceRouter.put(
   '/:device_id',
   validate(createDeviceSchema, 'body'),
+  validate(getGardenSchema, 'params'),
   controller.updateDevice,
 );
-deviceRouter.delete('/:device_id', controller.deleteDevice);
+deviceRouter.delete('/:device_id', validate(getDeviceSchema, 'params'), controller.deleteDevice);
 
 export { deviceRouter };
