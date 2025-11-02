@@ -8,6 +8,7 @@ import {
 import { validate } from '../../../middlewares/ValidateMiddleware.js';
 import express from 'express';
 import { getGardenSchema } from '../schemas/GardenSchemas.js';
+import { requireGardenOwner } from '../../../middlewares/AuthMiddleware.js';
 
 const userGardenRouter = express.Router();
 const userGardenController = new UserGardenSharedController();
@@ -24,17 +25,20 @@ userGardenRouter.post(
   '/:garden_id/users',
   validate(getGardenSchema, 'params'),
   validate(addUserIntoGardenSchema, 'body'),
+  requireGardenOwner,
   userGardenController.addUserToGarden,
 );
 userGardenRouter.put(
   '/:garden_id/users/:user_id',
   validate(updateUserInGardenSchema, 'params'),
   validate(updateUserRoleOfGardenSchema, 'body'),
+  requireGardenOwner,
   userGardenController.updateUserRoleOfGarden,
 );
 userGardenRouter.delete(
   '/:garden_id/users/:user_id',
   validate(updateUserInGardenSchema, 'params'),
+  requireGardenOwner,
   userGardenController.removeUserFromGarden,
 );
 

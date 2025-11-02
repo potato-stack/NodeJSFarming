@@ -1,69 +1,48 @@
-import { GardenRepository } from '../infrastructure/repository/GardenRepository.js';
 import { GardenError } from '../errors/GardenError.js';
-import { HandleServerError } from '../errors/ServerError.js';
 import { Garden } from '../domains/entities/Garden.js';
 import { GardenInfoDto } from '../dtos/Garden.dto.js';
+import { dependencies } from '../di/container.js';
+import { TYPES } from '../di/types.js';
 
-const gardenRepository = new GardenRepository();
+const gardenRepository = dependencies.get(TYPES.GardenRepository);
 
 export class GardenServices {
   async createGarden(createGardenDto) {
-    try {
-      const garden = new Garden(createGardenDto);
-      const newGarden = await gardenRepository.create(garden);
-      return new GardenInfoDto(newGarden);
-    } catch (error) {
-      if (error.name === 'SequelizeUniqueConstraintError') throw GardenError.Conflict();
-      HandleServerError(error);
-    }
+    const garden = new Garden(createGardenDto);
+    const newGarden = await gardenRepository.create(garden);
+    return new GardenInfoDto(newGarden);
   }
 
   async getGardenByID(id) {
-    try {
-      const garden = await gardenRepository.getByID(id);
-      if (!garden) {
-        throw GardenError.NotFound(`Garden with ID ${id} not found`);
-      }
-      return new GardenInfoDto(garden);
-    } catch (error) {
-      HandleServerError(error);
+    const garden = await gardenRepository.getByID(id);
+    if (!garden) {
+      throw GardenError.NotFound(`Garden with ID ${id} not found`);
     }
+    return new GardenInfoDto(garden);
   }
 
   async getAllGardens() {
-    try {
-      const gardens = await gardenRepository.get();
-      return gardens.map((r) => new GardenInfoDto(r));
-    } catch (error) {
-      HandleServerError(error);
-    }
+    const gardens = await gardenRepository.get();
+    return gardens.map((r) => new GardenInfoDto(r));
   }
 
   async updateGarden(updateGardenDto) {
-    try {
-      const garden = new Garden(updateGardenDto);
-      const id = updateGardenDto.id;
-      const affectedCount = await gardenRepository.update(garden, { id: id });
-      if (!affectedCount) {
-        throw GardenError.NotFound(`Garden with ID ${id} not found`);
-      }
-      return { status: 'success', message: `Garden with ID ${id} updated successfully` };
-    } catch (error) {
-      HandleServerError(error);
+    const garden = new Garden(updateGardenDto);
+    const id = updateGardenDto.id;
+    const affectedCount = await gardenRepository.update(garden, { id: id });
+    if (!affectedCount) {
+      throw GardenError.NotFound(`Garden with ID ${id} not found`);
     }
+    return { status: 'success', message: `Garden with ID ${id} updated successfully` };
   }
 
   async deleteGarden(id) {
-    try {
-      const affectedCount = await gardenRepository.delete({ id: id });
+    const affectedCount = await gardenRepository.delete({ id: id });
 
-      if (affectedCount === 0) {
-        throw GardenError.NotFound();
-      }
-      return { status: 'success', message: `Garden of id: ${id} is deleted sucessfully` };
-    } catch (error) {
-      HandleServerError(error);
+    if (affectedCount === 0) {
+      throw GardenError.NotFound();
     }
+    return { status: 'success', message: `Garden of id: ${id} is deleted sucessfully` };
   }
 
   static instance = null;

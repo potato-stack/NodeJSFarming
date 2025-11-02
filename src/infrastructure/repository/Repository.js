@@ -1,4 +1,5 @@
 import { sequelize } from '../../config/Database.js';
+import { ServerError } from '../../errors/ServerError.js';
 export class BaseRepository {
   constructor(model, DomainClass) {
     this.model = model;
@@ -6,34 +7,56 @@ export class BaseRepository {
   }
 
   async getByID(id) {
-    const record = await this.model.findByPk(id);
-    return record ? new this.DomainClass(record) : null;
+    try {
+      const record = await this.model.findByPk(id);
+      return record ? new this.DomainClass(record) : null;
+    } catch (error) {
+      throw ServerError.InfraError(`Cannot get entity with ${id}`);
+    }
   }
 
   async get(where = {}) {
-    const records = await this.model.findAll(Object.keys(where).length > 0 ? { where } : undefined);
-    return records.length ? records.map((r) => new this.DomainClass(r)) : null;
+    try {
+      const records = await this.model.findAll(
+        Object.keys(where).length > 0 ? { where } : undefined,
+      );
+      return records.length ? records.map((r) => new this.DomainClass(r)) : null;
+    } catch (error) {
+      throw ServerError.InfraError(`Cannot get entity with ${error}`);
+    }
   }
 
   async create(entity) {
-    await sequelize.sync();
-    const payload = Object.fromEntries(
-      Object.entries(entity.value()).filter(([_, v]) => v !== undefined),
-    );
-    const record = await this.model.create(payload);
-    return new this.DomainClass(record);
+    try {
+      await sequelize.sync();
+      const payload = Object.fromEntries(
+        Object.entries(entity.value()).filter(([_, v]) => v !== undefined),
+      );
+      const record = await this.model.create(payload);
+      return new this.DomainClass(record);
+    } catch (error) {
+      throw ServerError.InfraError(`Cannot create entity ${entity} with error ${error}`);
+    }
   }
 
   async update(newEntity, where) {
-    const payload = Object.fromEntries(
-      Object.entries(newEntity.value()).filter(([_, v]) => v !== undefined),
-    );
-    const [affectedCount] = await this.model.update(payload, { where });
-    return affectedCount > 0;
+    try {
+      const payload = Object.fromEntries(
+        Object.entries(newEntity.value()).filter(([_, v]) => v !== undefined),
+      );
+      const [affectedCount] = await this.model.update(payload, { where });
+      return affectedCount > 0;
+    } catch (error) {
+      throw ServerError.InfraError(`Cannot update entity with error ${error}`);
+    }
   }
 
   async delete(where) {
-    const affectedCount = await this.model.destroy({where});
-    return affectedCount > 0;
+    try {
+      const affectedCount = await this.model.destroy({ where });
+      return affectedCount > 0;
+    } catch (error) {
+      throw ServerError.InfraError(`Cannot delete entity with error ${error}`);
+    }
   }
 }

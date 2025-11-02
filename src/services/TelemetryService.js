@@ -1,6 +1,5 @@
 import { DeviceRepository } from '../infrastructure/repository/DeviceRepository.js';
 import { DeviceError } from '../errors/DeviceError.js';
-import { HandleServerError } from '../errors/ServerError.js';
 import { Device } from '../domains/entities/Device.js';
 import { DeviceInfoDto } from '../dtos/Device.dto.js';
 
@@ -8,61 +7,40 @@ const deviceRepository = new DeviceRepository();
 
 export class TelemetryServices {
   createDevice = async (createDeviceDto) => {
-    try {
-      const device = new Device(createDeviceDto);
-      return await deviceRepository.create(device);
-    } catch (error) {
-      if (error.name === 'SequelizeUniqueConstraintError') throw DeviceError.Conflict();
-      HandleServerError(error);
-    }
+    const device = new Device(createDeviceDto);
+    return await deviceRepository.create(device);
   };
 
   getDeviceByID = async (id) => {
-    try {
-      const device = await deviceRepository.getByID(id);
-      if (!device) {
-        throw DeviceError.NotFound(`Device with ID ${id} not found`);
-      }
-      return new DeviceInfoDto(device);
-    } catch (error) {
-      HandleServerError(error);
+    const device = await deviceRepository.getByID(id);
+    if (!device) {
+      throw DeviceError.NotFound(`Device with ID ${id} not found`);
     }
+    return new DeviceInfoDto(device);
   };
 
   getAllDevices = async () => {
-    try {
-      const devices = await deviceRepository.get();
-      return devices.map((r) => new DeviceInfoDto(r));
-    } catch (error) {
-      HandleServerError(error);
-    }
+    const devices = await deviceRepository.get();
+    return devices.map((r) => new DeviceInfoDto(r));
   };
 
   updateDevice = async (UpdateDeviceDto) => {
-    try {
-      const device = new Device(UpdateDeviceDto);
-      const id = UpdateDeviceDto.id;
-      const affectedCount = await deviceRepository.update(device, { id: id });
-      if (affectedCount === 0) {
-        throw DeviceError.NotFound(`Device with ID ${id} not found`);
-      }
-      return { status: 'success', message: `Device with ID ${id} updated successfully` };
-    } catch (error) {
-      HandleServerError(error);
+    const device = new Device(UpdateDeviceDto);
+    const id = UpdateDeviceDto.id;
+    const affectedCount = await deviceRepository.update(device, { id: id });
+    if (affectedCount === 0) {
+      throw DeviceError.NotFound(`Device with ID ${id} not found`);
     }
+    return { status: 'success', message: `Device with ID ${id} updated successfully` };
   };
 
   deleteDevice = async (id) => {
-    try {
-      const affectedCount = await deviceRepository.delete({ id: id });
+    const affectedCount = await deviceRepository.delete({ id: id });
 
-      if (affectedCount === 0) {
-        throw DeviceError.NotFound();
-      }
-      return { status: 'success', message: `Device of id: ${id} is deleted sucessfully` };
-    } catch (error) {
-      HandleServerError(error);
+    if (affectedCount === 0) {
+      throw DeviceError.NotFound();
     }
+    return { status: 'success', message: `Device of id: ${id} is deleted sucessfully` };
   };
 
   static instance = null;
