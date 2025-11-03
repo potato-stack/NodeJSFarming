@@ -7,4 +7,8 @@ export const TYPES = {
   GardenServices: Symbol.for('GardenServices'),
   TelemetryServices: Symbol.for('TelemetryServices'),
   GardenManageService: Symbol.for('UserGardenRepository'),
+  TelemetryController: Symbol.for('TelemetryController'),
+  UsersController: Symbol.for('UsersController'),
+  GardenController: Symbol.for('GardenController'),
+  UserGardenSharedController: Symbol.for('UserGardenSharedController'),
 };

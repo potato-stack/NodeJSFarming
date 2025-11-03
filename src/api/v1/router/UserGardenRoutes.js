@@ -9,13 +9,23 @@ import { validate } from '../../../middlewares/ValidateMiddleware.js';
 import express from 'express';
 import { getGardenSchema } from '../schemas/GardenSchemas.js';
 import { requireGardenOwner } from '../../../middlewares/AuthMiddleware.js';
+import { controllerManage } from '../../../dependencies/bindingcontroller.js';
+import { TYPES } from '../../../dependencies/types.js';
 
 const userGardenRouter = express.Router();
-const userGardenController = new UserGardenSharedController();
+const userGardenController = controllerManage.get(TYPES.UserGardenSharedController);
 
 userGardenRouter
-  .get('/:garden_id/users', validate(getGardenSchema, 'params'), userGardenController.getAllUsersInGarden)
-  .get('/:garden_id/role', validate(getGardenSchema, 'params'), userGardenController.getCurrentUserRoleOfGarden)
+  .get(
+    '/:garden_id/users',
+    validate(getGardenSchema, 'params'),
+    userGardenController.getAllUsersInGarden,
+  )
+  .get(
+    '/:garden_id/role',
+    validate(getGardenSchema, 'params'),
+    userGardenController.getCurrentUserRoleOfGarden,
+  )
   .get(
     '/:garden_id/users/:user_id/role',
     validate(getUserInGardenSchema, 'params'),

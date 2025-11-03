@@ -1,11 +1,12 @@
-import { TelemetryController } from '../controllers/DeviceController.js';
 import { getDeviceSchema, createDeviceSchema } from '../schemas/DeviceSchemas.js';
 import { getGardenSchema } from '../schemas/GardenSchemas.js';
 import { validate } from '../../../middlewares/ValidateMiddleware.js';
 import express from 'express';
+import { controllerManage } from '../../../dependencies/bindingcontroller.js';
+import { TYPES } from '../../../dependencies/types.js';
 
 const deviceRouter = express.Router({ mergeParams: true });
-const controller = new TelemetryController();
+const controller = controllerManage.get(TYPES.TelemetryController);
 
 deviceRouter
   .get('/', controller.getAllDevice)
