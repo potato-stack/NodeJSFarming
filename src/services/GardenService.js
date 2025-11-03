@@ -1,10 +1,10 @@
 import { GardenError } from '../errors/GardenError.js';
 import { Garden } from '../domains/entities/Garden.js';
 import { GardenInfoDto } from '../dtos/Garden.dto.js';
-import { dependencies } from '../di/container.js';
-import { TYPES } from '../di/types.js';
+import { repositoryManage } from '../dependencies/bindingInfra.js';
+import { TYPES } from '../dependencies/types.js';
 
-const gardenRepository = dependencies.get(TYPES.GardenRepository);
+const gardenRepository = repositoryManage.get(TYPES.GardenRepository);
 
 export class GardenServices {
   async createGarden(createGardenDto) {

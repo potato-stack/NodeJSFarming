@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class Garden extends Entities {
   constructor(gardenProps) {
     super()
-    this.id = gardenProps?.id ? gardenProps.id : undefined;
+    this.id = gardenProps?.id ? gardenProps.id : uuidv4();
     this.name = gardenProps?.name ? new Name(gardenProps.name) : undefined;
     this.createdAt = gardenProps?.createdAt ? gardenProps.createdAt : undefined;
     this.updatedAt = gardenProps?.updatedAt ? gardenProps.updatedAt : undefined;

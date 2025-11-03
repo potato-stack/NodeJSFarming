@@ -1,14 +1,13 @@
-import { UserGardenRepository } from '../infrastructure/repository/userGardenRepository.js';
-import { GardenRepository } from '../infrastructure/repository/GardenRepository.js';
-import { UserRepository } from '../infrastructure/repository/userRepository.js';
 import { GardenError } from '../errors/GardenError.js';
 import { UserError } from '../errors/UserError.js';
 import { UserGarden } from '../domains/entities/UserGarden.js';
 import { UserGardenRelationDto } from '../dtos/UserGarden.dto.js';
+import { repositoryManage } from '../dependencies/bindingInfra.js';
+import { TYPES } from '../dependencies/types.js';
 
-const gardenRepository = new GardenRepository();
-const userGardenRepository = new UserGardenRepository();
-const userRepository = new UserRepository();
+const gardenRepository = repositoryManage.get(TYPES.GardenRepository);
+const userGardenRepository = repositoryManage.get(TYPES.UserGardenRepository);
+const userRepository = repositoryManage.get(TYPES.UserRepository);
 
 export class GardenManageService {
   addUserToGarden = async (GardenUsersRelationDto) => {

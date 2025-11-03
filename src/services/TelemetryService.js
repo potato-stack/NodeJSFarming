@@ -1,9 +1,10 @@
-import { DeviceRepository } from '../infrastructure/repository/DeviceRepository.js';
 import { DeviceError } from '../errors/DeviceError.js';
 import { Device } from '../domains/entities/Device.js';
 import { DeviceInfoDto } from '../dtos/Device.dto.js';
+import { repositoryManage } from '../dependencies/bindingInfra.js';
+import { TYPES } from '../dependencies/types.js';
 
-const deviceRepository = new DeviceRepository();
+const deviceRepository = repositoryManage.get(TYPES.DeviceRepository)
 
 export class TelemetryServices {
   createDevice = async (createDeviceDto) => {

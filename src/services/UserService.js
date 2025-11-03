@@ -1,10 +1,11 @@
 import { User } from '../domains/entities/User.js';
-import { UserRepository } from '../infrastructure/repository/userRepository.js';
 import { UserError } from '../errors/UserError.js';
 import jwt from 'jsonwebtoken';
 import { UserInfoDto, LoginResponseDto } from '../dtos/User.dto.js';
+import { repositoryManage } from '../dependencies/bindingInfra.js';
+import { TYPES } from '../dependencies/types.js';
 
-const userRepository = new UserRepository();
+const userRepository = repositoryManage.get(TYPES.UserRepository);
 // Private methods
 const createJWT = (payload, expireTime) => {
   return { token: jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: expireTime }) };

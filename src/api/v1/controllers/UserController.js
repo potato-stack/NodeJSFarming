@@ -1,12 +1,15 @@
 import { StatusCodes } from 'http-status-codes';
-import { UsersService } from '../../../services/UserService.js';
 import { LoginDto, RegisterDto, UpdateUserDto } from '../../../dtos/User.dto.js';
+import { serviceManage } from '../../../dependencies/bindingService.js';
+import { TYPES } from '../../../dependencies/types.js';
+
+const userService = serviceManage.get(TYPES.UsersService);
 
 export class UsersController {
   register = async (req, res, next) => {
     try {
       const user = new RegisterDto(req.body);
-      const createdUser = await UsersService.getInstance().register(user);
+      const createdUser = await userService.register(user);
 
       res.status(StatusCodes.CREATED).json(createdUser);
     } catch (error) {
@@ -17,7 +20,7 @@ export class UsersController {
   loginUser = async (req, res, next) => {
     try {
       const loginInfo = new LoginDto(req.body);
-      const response = await UsersService.getInstance().login(loginInfo);
+      const response = await userService.login(loginInfo);
 
       res.status(StatusCodes.OK).json(response);
     } catch (error) {
@@ -28,8 +31,8 @@ export class UsersController {
   getCurrentUserByID = async (req, res, next) => {
     try {
       const id = req.currentUser.id;
-      const device = await UsersService.getInstance().getUserByID(id);
-      res.status(StatusCodes.OK).json(device);
+      const user = await userService.getUserByID(id);
+      res.status(StatusCodes.OK).json(user);
     } catch (error) {
       next(error);
     }
@@ -37,7 +40,7 @@ export class UsersController {
 
   getAllUsers = async (req, res, next) => {
     try {
-      const users = await UsersService.getInstance().getAllUsers();
+      const users = await userService.getAllUsers();
       res.status(StatusCodes.OK).json(users);
     } catch (error) {
       next(error);
@@ -48,7 +51,7 @@ export class UsersController {
     try {
       const id = req.params.user_id;
       const newUser = new UpdateUserDto(req.body);
-      const response = await UsersService.getInstance().updateUser(newUser, { id: id });
+      const response = await userService.updateUser(newUser, { id: id });
       res.status(StatusCodes.OK).json(response);
     } catch (error) {
       next(error);
@@ -58,7 +61,7 @@ export class UsersController {
   deleteUser = async (req, res, next) => {
     try {
       const id = req.params.user_id;
-      const user = await UsersService.getInstance().deleteUser(id);
+      const user = await userService.deleteUser(id);
       res.status(StatusCodes.OK).json(user);
     } catch (error) {
       next(error);
