@@ -1,16 +1,15 @@
 import { Sequelize } from 'sequelize';
-import dotenv from 'dotenv';
+import { config } from '../config/Env.js'
 import os from 'os';
 import path from 'path';
-dotenv.config();
 
 const tempDbPath = path.join(os.tmpdir(), 'database.sqlite');
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: process.env.DB_PATH || tempDbPath,
-  username: process.env.DB_USER || 'default_user',
-  password: process.env.DB_PASS || null,
+  storage: config.DATABASE.PATH || tempDbPath,
+  username: config.DATABASE.USER || 'default_user',
+  password: config.DATABASE.PASS || null,
   logging: false, //Sqlite is just file so ignore
 });
 

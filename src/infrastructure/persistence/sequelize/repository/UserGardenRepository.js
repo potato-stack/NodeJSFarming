@@ -1,5 +1,5 @@
-import { UserGardens } from '../persistence/sequelize/SequelizeIndex.js';
-import { UserGarden } from '../../domains/entities/UserGarden.js';
+import { UserGardens } from '../SequelizeIndex.js';
+import { UserGarden } from '../../../../domains/entities/UserGarden.js';
 import { BaseRepository } from './Repository.js';
 
 export class UserGardenRepository extends BaseRepository {

@@ -4,11 +4,12 @@ import jwt from 'jsonwebtoken';
 import { UserInfoDto, LoginResponseDto } from '../dtos/User.dto.js';
 import { repositoryManage } from '../dependencies/bindingInfra.js';
 import { TYPES } from '../dependencies/types.js';
+import { config } from '../config/Env.js';
 
 const userRepository = repositoryManage.get(TYPES.UserRepository);
 // Private methods
 const createJWT = (payload, expireTime) => {
-  return { token: jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: expireTime }) };
+  return { token: jwt.sign(payload, config.AUTH.JWT_SECRET, { expiresIn: expireTime }) };
 };
 
 export class UsersService {

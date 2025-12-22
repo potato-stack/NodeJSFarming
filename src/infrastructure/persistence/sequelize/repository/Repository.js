@@ -1,5 +1,5 @@
-import { sequelize } from '../../config/Database.js';
-import { ServerError } from '../../errors/ServerError.js';
+import { sequelize } from '../../../../config/Database.js';
+import { ServerError } from '../../../../errors/ServerError.js';
 export class BaseRepository {
   constructor(model, DomainClass) {
     this.model = model;
@@ -45,7 +45,7 @@ export class BaseRepository {
         Object.entries(newEntity.value()).filter(([_, v]) => v !== undefined),
       );
       const [affectedCount] = await this.model.update(payload, { where });
-      return affectedCount > 0;
+      return affectedCount;
     } catch (error) {
       throw ServerError.InfraError(`Cannot update entity with error ${error}`);
     }

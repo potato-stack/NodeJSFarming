@@ -1,5 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../../../config/Database.js';
+import { sequelize } from '../../../../config/Database.js';
 
 export class Gardens extends Model {}
 

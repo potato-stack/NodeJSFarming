@@ -1,7 +1,4 @@
-import dotenv from 'dotenv';
-dotenv.config();
-const PORT = process.env.PORT;
-
+import { config } from './config/Env.js';
 import express from 'express';
 
 // Packages
@@ -26,8 +23,8 @@ const app = express();
 // Middleware
 app.use(
   rateLimiter({
-    windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
-    max: Number(process.env.RATE_LIMIT_MAX) || 60,
+    windowMs: Number(config.RATE_LIMIT.WINDOW_MS),
+    max: Number(config.RATE_LIMIT.RATE_LIMIT_MAX),
   })
 );
 
@@ -36,7 +33,7 @@ app.use(cors());
 app.use(morgan());
 
 app.use(express.json());
-app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(cookieParser(config.AUTH.COOKIE_SECRET));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -53,6 +50,6 @@ app.use('/', userRouter);
 // Error handler
 app.use(errorHandlerMiddleware);
 
-app.listen(PORT, () => {
-  console.log('Application listening at port: ', PORT);
+app.listen(config.SERVER.PORT, () => {
+  console.log('Application listening at port: ', config.SERVER.PORT);
 });

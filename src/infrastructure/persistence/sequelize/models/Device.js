@@ -1,9 +1,9 @@
 import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../../../config/Database.js';
+import { sequelize } from '../../../../config/Database.js';
 
-export class TelemetryDevices extends Model {}
+export class Devices extends Model {}
 
-TelemetryDevices.init(
+Devices.init(
   {
     id: {
       type: DataTypes.UUID,
