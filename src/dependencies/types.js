@@ -16,4 +16,5 @@ export const TYPES = {
   UserRouter: Symbol.for('UserRouter'),
   AuthRouter: Symbol.for('AuthRouter'),
   UserGardenRouter: Symbol.for('UserGardenRouter'),
+  RequireGardenOwner: Symbol.for('RequireGardenOwner'),
 };

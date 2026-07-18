@@ -11,7 +11,7 @@ import rateLimiter from 'express-rate-limit'; // Prevent bruteforce
 // Modules
 import { validateCookie } from './middlewares/ValidateMiddleware.js';
 import { validateTokenSchema } from './api/v1/schemas/UserSchemas.js';
-import { authMiddleWare, requireGardenOwner } from './middlewares/AuthMiddleware.js';
+import { authMiddleWare } from './middlewares/AuthMiddleware.js';
 import { errorHandlerMiddleware } from './middlewares/ErrorMiddleware.js';
 import { TYPES } from './dependencies/types.js';
 import { container } from './dependencies/container.js';
@@ -41,7 +41,7 @@ app.use('/auth', container.get(TYPES.AuthRouter));
 // Authentication middle ware
 app.use(validateCookie(validateTokenSchema), authMiddleWare);
 // Router
-app.use('/gardens/:garden_id/devices', requireGardenOwner, container.get(TYPES.DeviceRouter));
+app.use('/gardens/:garden_id/devices', container.get(TYPES.RequireGardenOwner), container.get(TYPES.DeviceRouter));
 app.use('/gardens', container.get(TYPES.GardenRouter));
 app.use('/gardens',  container.get(TYPES.UserGardenRouter));
 app.use('/', container.get(TYPES.UserRouter));

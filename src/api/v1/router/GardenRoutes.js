@@ -1,9 +1,8 @@
 import express from 'express';
 import { validate } from '../../../middlewares/ValidateMiddleware.js';
-import { requireGardenOwner } from '../../../middlewares/AuthMiddleware.js';
 import { createGardenSchema, getGardenSchema } from '../schemas/GardenSchemas.js';
 
-export const createGardenRouter = (gardenController, userGardenController) => {
+export const createGardenRouter = (gardenController, userGardenController, requireGardenOwner) => {
     const gardenRouter = express.Router();
 
     gardenRouter.get('/:garden_id', validate(getGardenSchema, 'params'), gardenController.getGardenById).get('/', userGardenController.getGardensOfCurrentUser);

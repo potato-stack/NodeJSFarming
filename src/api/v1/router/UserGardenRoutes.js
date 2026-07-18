@@ -7,9 +7,8 @@ import {
 import { validate } from '../../../middlewares/ValidateMiddleware.js';
 import express from 'express';
 import { getGardenSchema } from '../schemas/GardenSchemas.js';
-import { requireGardenOwner } from '../../../middlewares/AuthMiddleware.js';
 
-export const createUserGardenRouter = (userGardenController) => {
+export const createUserGardenRouter = (userGardenController, requireGardenOwner) => {
   const userGardenRouter = express.Router();
   userGardenRouter
     .get(
