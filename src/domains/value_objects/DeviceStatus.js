@@ -4,7 +4,7 @@ import { ServerError } from '../../errors/ServerError.js';
 export class DeviceStatus {
   constructor(value) {
     const schema = Joi.string()
-      .valid('online', 'offline', 'error')
+      .valid('online', 'offline', 'unknown')
       .required()
       .messages({ 'any.only': 'Invalid status . Must be one of: online, offline, error' });
 
