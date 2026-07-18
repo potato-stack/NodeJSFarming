@@ -1,20 +1,14 @@
 import { GardenError } from '../errors/GardenError.js';
 import { Garden } from '../domains/entities/Garden.js';
 import { GardenInfoDto } from '../dtos/Garden.dto.js';
-import { repositoryManage } from '../dependencies/bindingInfra.js';
-import { TYPES } from '../dependencies/types.js';
 
-const gardenRepository = repositoryManage.get(TYPES.GardenRepository);
-
-export class GardenServices {
-  async createGarden(createGardenDto) {
-    const garden = new Garden(createGardenDto);
-    const newGarden = await gardenRepository.create(garden);
-    return new GardenInfoDto(newGarden);
+export class GardenService {
+  constructor(gardenRepository) {
+    this.gardenRepository = gardenRepository;
   }
 
   async getGardenByID(id) {
-    const garden = await gardenRepository.getByID(id);
+    const garden = await this.gardenRepository.getByID(id);
     if (!garden) {
       throw GardenError.NotFound(`Garden with ID ${id} not found`);
     }
@@ -22,14 +16,14 @@ export class GardenServices {
   }
 
   async getAllGardens() {
-    const gardens = await gardenRepository.get();
+    const gardens = await this.gardenRepository.get();
     return gardens.map((r) => new GardenInfoDto(r));
   }
 
   async updateGarden(updateGardenDto) {
     const garden = new Garden(updateGardenDto);
     const id = updateGardenDto.id;
-    const affectedCount = await gardenRepository.update(garden, { id: id });
+    const affectedCount = await this.gardenRepository.update(garden, { id: id });
     if (!affectedCount) {
       throw GardenError.NotFound(`Garden with ID ${id} not found`);
     }
@@ -37,19 +31,11 @@ export class GardenServices {
   }
 
   async deleteGarden(id) {
-    const affectedCount = await gardenRepository.delete({ id: id });
+    const affectedCount = await this.gardenRepository.delete({ id: id });
 
     if (affectedCount === 0) {
       throw GardenError.NotFound();
     }
     return { status: 'success', message: `Garden of id: ${id} is deleted sucessfully` };
-  }
-
-  static instance = null;
-  static getInstance() {
-    if (!GardenServices.instance) {
-      GardenServices.instance = new GardenServices();
-    }
-    return GardenServices.instance;
   }
 }

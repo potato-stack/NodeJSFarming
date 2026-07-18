@@ -1,6 +1,5 @@
-import { GardenError } from "./ServerError.js";
 import { StatusCodes } from "http-status-codes";
-
+import { ServerError } from "./ServerError.js";
 export class GardenError extends ServerError {
     constructor(message, statusCode) {
         super("Garden Error: " + message, statusCode);

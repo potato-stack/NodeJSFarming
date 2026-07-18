@@ -1,8 +1,8 @@
 import { Entities } from './Entities.js';
-import { Name } from '../value_objets/Name.js';
-import { DeviceType } from '../value_objets/DeviceType.js';
-import { DeviceStatus } from '../value_objets/DeviceStatus.js';
-import { DeviceLocation } from '../value_objets/DeviceLocation.js';
+import { Name } from '../value_objects/Name.js';
+import { DeviceType } from '../value_objects/DeviceType.js';
+import { DeviceStatus } from '../value_objects/DeviceStatus.js';
+import { DeviceLocation } from '../value_objects/DeviceLocation.js';
 import { DeviceError } from '../../errors/DeviceError.js';
 import { v4 as uuidv4 } from 'uuid';
 

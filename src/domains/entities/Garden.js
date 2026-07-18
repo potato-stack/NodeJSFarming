@@ -1,5 +1,5 @@
 import { GardenError } from '../../errors/GardenError.js';
-import { Name } from '../value_objets/Name.js';
+import { Name } from '../value_objects/Name.js';
 import { Entities } from './Entities.js';
 import { v4 as uuidv4 } from 'uuid';
 

@@ -2,27 +2,28 @@ import { User } from '../domains/entities/User.js';
 import { UserError } from '../errors/UserError.js';
 import jwt from 'jsonwebtoken';
 import { UserInfoDto, LoginResponseDto } from '../dtos/User.dto.js';
-import { repositoryManage } from '../dependencies/bindingInfra.js';
-import { TYPES } from '../dependencies/types.js';
 import { config } from '../config/Env.js';
 
-const userRepository = repositoryManage.get(TYPES.UserRepository);
 // Private methods
 const createJWT = (payload, expireTime) => {
   return { token: jwt.sign(payload, config.AUTH.JWT_SECRET, { expiresIn: expireTime }) };
 };
 
 export class UsersService {
+  constructor(userRepository) {
+    this.userRepository = userRepository;
+  }
+
   register = async (userDto) => {
     const user = new User(userDto);
     user.password.hashPassword();
-    const newUser = await userRepository.create(user);
+    const newUser = await this.userRepository.create(user);
     return new UserInfoDto(newUser);
   };
 
   login = async (loginDto) => {
     const { email, password } = loginDto;
-    const users = await userRepository.get({ email });
+    const users = await this.userRepository.get({ email });
     if (!users || users.length == 0) {
       throw UserError.NotFound();
     }
@@ -37,7 +38,7 @@ export class UsersService {
   };
 
   getUserByID = async (id) => {
-    const user = await userRepository.getByID(id);
+    const user = await this.userRepository.getByID(id);
     if (!user) {
       throw UserError.NotFound(`User with ID ${id} not found`);
     }
@@ -45,14 +46,14 @@ export class UsersService {
   };
 
   getAllUsers = async () => {
-    const users = await userRepository.get();
+    const users = await this.userRepository.get();
     return users.map((r) => new UserInfoDto(r));
   };
 
   updateUser = async (userDto) => {
     const targetUpdate = new User(userDto);
     const id = userDto.id;
-    const [affectedCount] = await userRepository.update(targetUpdate, { id: id });
+    const [affectedCount] = await this.userRepository.update(targetUpdate, { id: id });
     if (affectedCount === 0) {
       throw UserError.NotFound(`User with ID ${targetUpdate.id} not found`);
     }
@@ -60,19 +61,10 @@ export class UsersService {
   };
 
   deleteUser = async (id) => {
-    const affectedCount = await userRepository.delete({ id: id });
-
+    const affectedCount = await this.userRepository.delete({ id: id });
     if (affectedCount === 0) {
       throw UserError.NotFound();
     }
     return { status: 'success', message: `User of id: ${id} is deleted sucessfully` };
   };
-
-  static instance = null;
-  static getInstance() {
-    if (!UsersService.instance) {
-      UsersService.instance = new UsersService();
-    }
-    return UsersService.instance;
-  }
 }

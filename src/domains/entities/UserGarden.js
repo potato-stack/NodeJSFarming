@@ -1,6 +1,6 @@
 import { ServerError } from '../../errors/ServerError.js';
 import { UserError } from '../../errors/UserError.js';
-import { Roles } from '../value_objets/roles.js';
+import { Roles } from '../value_objects/roles.js';
 import { Entities } from './Entities.js';
 
 export class UserGarden extends Entities {

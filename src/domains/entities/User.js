@@ -1,7 +1,7 @@
 import { UserError } from '../../errors/UserError.js';
-import { Name } from '../value_objets/Name.js';
-import { Password } from '../value_objets/Password.js';
-import { Email } from '../value_objets/Email.js';
+import { Name } from '../value_objects/Name.js';
+import { Password } from '../value_objects/Password.js';
+import { Email } from '../value_objects/Email.js';
 import { Entities } from './Entities.js';
 import { v4 as uuidv4 } from 'uuid';
 

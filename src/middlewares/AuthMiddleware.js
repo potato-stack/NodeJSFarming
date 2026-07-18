@@ -3,7 +3,7 @@ import { config } from '../config/Env.js';
 import { UserError } from '../errors/UserError.js';
 import { GardenError } from '../errors/GardenError.js';
 import { GetUserOfGardenDto } from '../dtos/UserGarden.dto.js';
-import { GardenManageService } from '../services/UserGardenService.js';
+import { TYPES } from '../dependencies/types.js';
 
 export const authMiddleWare = (req, res, next) => {
   try {
@@ -23,9 +23,10 @@ export const requireGardenOwner = async (req, res, next) => {
       garden_id: req.params.garden_id,
       user_id: req.currentUser.id,
     });
+    const { container } = await import('../dependencies/container.js');
     const userRole =
-    await GardenManageService.getInstance().getUserRoleOfGarden(dto);
-    if (userRole.value !== 'owner')
+    await container.get(TYPES.UserGardenService).getUserRoleOfGarden(dto);
+    if (userRole !== 'owner')
       throw GardenError.BadRequest('This action must be done by the garden owner!');
     next();
   } catch (err) {

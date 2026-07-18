@@ -7,13 +7,12 @@ import {
 } from '../../../dtos/UserGarden.dto.js';
 import { GardenError } from '../../../errors/GardenError.js';
 import { UserError } from '../../../errors/UserError.js';
-import { serviceManage } from '../../../dependencies/bindingService.js';
-import { TYPES } from '../../../dependencies/types.js';
 
-const gardenManageService = serviceManage.get(TYPES.GardenManageService);
-const userService = serviceManage.get(TYPES.UsersService);
+export class UserGardenController {
+  constructor(userGardenService) {
+    this.userGardenService = userGardenService;
+  };
 
-export class UserGardenSharedController {
   addUserToGarden = async (req, res, next) => {
     try {
       const relation = new AddUserToGardenDto({
@@ -21,7 +20,7 @@ export class UserGardenSharedController {
         garden_id: req.params.garden_id,
         role: req.body.role,
       });
-      const createdUserGarden = await gardenManageService.addUserToGarden(relation);
+      const createdUserGarden = await this.userGardenService.addUserToGarden(relation);
 
       res.status(StatusCodes.CREATED).json(createdUserGarden);
     } catch (error) {
@@ -37,7 +36,7 @@ export class UserGardenSharedController {
       });
       if (dto.user_id == relation.user_id)
         throw GardenError.BadRequest('You cannot remove yourself from your garden.');
-      const removedUserGarden = await gardenManageService.removeUserFromGarden(relation);
+      const removedUserGarden = await this.userGardenService.removeUserFromGarden(relation);
 
       res.status(StatusCodes.OK).json(removedUserGarden);
     } catch (error) {
@@ -55,7 +54,7 @@ export class UserGardenSharedController {
         user_id: req.params.user_id,
         role: req.body.role,
       });
-      const updatedUserGarden = await gardenManageService.updateUserRoleOfGarden(relation);
+      const updatedUserGarden = await this.userGardenService.updateUserRoleOfGarden(relation);
 
       res.status(StatusCodes.OK).json(updatedUserGarden);
     } catch (error) {
@@ -69,7 +68,7 @@ export class UserGardenSharedController {
         garden_id: req.params.garden_id,
         user_id: req.params.user_id,
       });
-      const userRole = await gardenManageService.getUserRoleOfGarden(relation);
+      const userRole = await this.userGardenService.getUserRoleOfGarden(relation);
 
       res.status(StatusCodes.OK).json(userRole);
     } catch (error) {
@@ -83,7 +82,7 @@ export class UserGardenSharedController {
         garden_id: req.params.garden_id,
         user_id: req.currentUser.id,
       });
-      const userRole = await gardenManageService.getUserRoleOfGarden(relation);
+      const userRole = await this.userGardenService.getUserRoleOfGarden(relation);
 
       res.status(StatusCodes.OK).json(userRole);
     } catch (error) {
@@ -93,16 +92,17 @@ export class UserGardenSharedController {
 
   getAllUsersInGarden = async (req, res, next) => {
     try {
-      const users = await gardenManageService.getUserByGardenId(req.params.garden_id);
-      const usersInfo = [];
-      for (const user of users) {
-        const info = {
-          ...(await userService.getUserByID(user.user_id)),
-          role: user.role,
-        };
-        usersInfo.push(info);
-      }
+      const usersInfo = await this.userGardenService.getUserByGardenId(req.params.garden_id);
       res.status(StatusCodes.OK).json(usersInfo);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getGardensOfCurrentUser = async (req, res, next) => {
+    try {
+      const gardens = await this.userGardenService.getGardenByUserId(req.currentUser.id);
+      res.status(StatusCodes.OK).json(gardens);
     } catch (error) {
       next(error);
     }

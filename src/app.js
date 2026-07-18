@@ -8,14 +8,13 @@ import helmet from 'helmet'; // Secure HTTP header
 import cors from 'cors'; // Cross origin request
 import rateLimiter from 'express-rate-limit'; // Prevent bruteforce
 
-import { deviceRouter } from './api/v1/router/DeviceRoutes.js';
-import { userRouter, authRouter } from './api/v1/router/UserRoutes.js';
-import { gardenRouter } from './api/v1/router/GardenRoutes.js';
-import { userGardenRouter } from './api/v1/router/UserGardenRoutes.js';
+// Modules
 import { validateCookie } from './middlewares/ValidateMiddleware.js';
 import { validateTokenSchema } from './api/v1/schemas/UserSchemas.js';
 import { authMiddleWare, requireGardenOwner } from './middlewares/AuthMiddleware.js';
 import { errorHandlerMiddleware } from './middlewares/ErrorMiddleware.js';
+import { TYPES } from './dependencies/types.js';
+import { container } from './dependencies/container.js';
 
 // Express
 const app = express();
@@ -25,7 +24,7 @@ app.use(
   rateLimiter({
     windowMs: Number(config.RATE_LIMIT.WINDOW_MS),
     max: Number(config.RATE_LIMIT.RATE_LIMIT_MAX),
-  })
+  }),
 );
 
 app.use(helmet());
@@ -38,14 +37,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Auth do not require auth-middle
-app.use('/auth', authRouter);
+app.use('/auth', container.get(TYPES.AuthRouter));
 // Authentication middle ware
 app.use(validateCookie(validateTokenSchema), authMiddleWare);
 // Router
-app.use('/gardens/:garden_id/devices', requireGardenOwner, deviceRouter);
-app.use('/gardens', gardenRouter);
-app.use('/gardens', userGardenRouter);
-app.use('/', userRouter);
+app.use('/gardens/:garden_id/devices', requireGardenOwner, container.get(TYPES.DeviceRouter));
+app.use('/gardens', container.get(TYPES.GardenRouter));
+app.use('/gardens',  container.get(TYPES.UserGardenRouter));
+app.use('/', container.get(TYPES.UserRouter));
 
 // Error handler
 app.use(errorHandlerMiddleware);
